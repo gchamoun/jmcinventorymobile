@@ -1,109 +1,275 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Flutter Demo',
-      theme: new ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
-        // counter didn't reset back to zero; the application is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: new MyHomePage(title: 'Flutters Demo Home Page'),
+      theme: new ThemeData(primarySwatch: Colors.blue),
+      home: new LoginPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class LoginPage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  State createState() => new LoginPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
+  Animation<double> _iconAnimation;
+  AnimationController _iconAnimationController;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  @override
+    void initState() {
+    super.initState();
+    _iconAnimationController = new AnimationController(
+        vsync: this, duration: new Duration(milliseconds: 500));
+    _iconAnimation = new CurvedAnimation(
+      parent: _iconAnimationController,
+      curve: Curves.bounceOut,
+    );
+    _iconAnimation.addListener(() => this.setState(() {}));
+    _iconAnimationController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return new Scaffold(
-      appBar: new AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: new Text(widget.title),
-      ),
-      body: new Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: new Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug paint" (press "p" in the console where you ran
-          // "flutter run", or select "Toggle Debug Paint" from the Flutter tool
-          // window in IntelliJ) to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(
-              'You have pushed the button this many times:',
-            ),
-            new Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+
+    return new Scaffold(resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.white,
+      body: new Stack(fit: StackFit.expand, children: <Widget>[
+        new Image(
+          image: new AssetImage("assets/Samford.jpg"),
+          fit: BoxFit.cover,
+          colorBlendMode: BlendMode.darken,
+          color: Colors.black87,
         ),
-      ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: new Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        new Theme(
+          data: new ThemeData(
+              brightness: Brightness.dark,
+              inputDecorationTheme: new InputDecorationTheme(
+                // hintStyle: new TextStyle(color: Colors.blue, fontSize: 20.0),
+                labelStyle:
+                new TextStyle(color: Colors.white, fontSize: 20.0),
+              )),
+          isMaterialAppTheme: true,
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Image(
+                  image: new AssetImage("assets/jmcLogo.jpg"),height: 150.00),
+
+              new Container(
+                padding: const EdgeInsets.all(40.0),
+                child: new Form(
+                  autovalidate: true,
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      new TextFormField(
+                        decoration: new InputDecoration(
+                            labelText: "Enter Email", fillColor: Colors.white),
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      new TextFormField(
+                        decoration: new InputDecoration(
+                            labelText: "Enter Password",fillColor: Colors.white
+                        ),
+                        obscureText: true,
+                        keyboardType: TextInputType.text,
+                      ),
+
+                      new Padding(
+                        padding: const EdgeInsets.only(top:40.0),
+                      ),
+
+                      new Row(     mainAxisSize: MainAxisSize.max,
+
+                        children: <Widget>[
+
+                      new MaterialButton(
+
+                          height: 50.0,
+                          minWidth: 110.0,
+                          color: Colors.indigo[900],
+                          splashColor: Colors.indigo[900],
+                          textColor: Colors.white,                          onPressed: () { Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignupScreen()),
+                      );
+                      },
+
+                          child: Column(
+                            children:<Widget>[
+                              new Padding(
+                                padding: const EdgeInsets.only(top:8.0),
+                              ),
+                              new Icon(FontAwesomeIcons.userPlus),new Padding(
+                                padding: const EdgeInsets.only(top:8.0),
+                              ),
+                              Text("Signup"),
+                              new Padding(
+                                padding: const EdgeInsets.only(top:8.0),
+                              ),
+                            ],
+
+                          )
+
+                      ),
+                      new Padding(
+                        padding: const EdgeInsets.only(left: 50.0),
+                      ),
+                      new MaterialButton(
+
+                          height: 50.0,
+                          minWidth: 110.0,
+                          color: Colors.indigo[900],
+                          splashColor: Colors.indigo[900],
+                          textColor: Colors.white,                          onPressed: () {},
+
+                          child: Column(
+                            children:<Widget>[
+                              new Padding(
+                                padding: const EdgeInsets.only(top:8.0),
+                              ),
+                              new Icon(FontAwesomeIcons.signInAlt),
+                              new Padding(
+                                padding: const EdgeInsets.only(top:8.0),
+                              ),
+
+                              Text("Login"),
+                              new Padding(
+                                padding: const EdgeInsets.only(top:8.0),
+                              ),
+                            ],
+
+                          )
+
+                      )],
+  )],
+
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ]),
     );
   }
+
 }
+class SignupScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+    return new Scaffold(appBar: AppBar(
+      backgroundColor: Colors.indigo[900],
+      title: Text("Signup"),
+    ),
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.white,
+      body: new Stack(fit: StackFit.expand, children: <Widget>[
+      new Image(
+      image: new AssetImage("assets/Samford.jpg"),
+      fit: BoxFit.cover,
+      colorBlendMode: BlendMode.darken,
+      color: Colors.black87,
+    ),
+
+    new Theme(
+    data: new ThemeData(
+    brightness: Brightness.dark,
+    inputDecorationTheme: new InputDecorationTheme(
+    // hintStyle: new TextStyle(color: Colors.blue, fontSize: 20.0),
+    labelStyle:
+    new TextStyle(color: Colors.white, fontSize: 20.0),
+    )),
+    isMaterialAppTheme: true,
+    child: new Column(
+
+    children: <Widget>[
+
+
+    new Container(
+    padding: const EdgeInsets.all(40.0),
+    child: new Form(
+    autovalidate: true,
+    child: new Column(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: <Widget>[
+
+
+
+    new TextFormField(
+    decoration: new InputDecoration(
+    labelText: "Enter Email", fillColor: Colors.white),
+    keyboardType: TextInputType.emailAddress,
+    ),
+    new TextFormField(
+    decoration: new InputDecoration(
+    labelText: "Enter Password",fillColor: Colors.white
+    ),
+    obscureText: true,
+    keyboardType: TextInputType.text,
+    ),
+    new TextFormField(
+      decoration: new InputDecoration(
+          labelText: "Confirm Password",fillColor: Colors.white
+      ),
+      obscureText: true,
+      keyboardType: TextInputType.text,
+    ),
+    new Padding(
+    padding: const EdgeInsets.only(top:40.0),
+    ),
+
+    new Container(     width: double.infinity,
+
+
+    child: new MaterialButton(
+
+    color: Colors.indigo[900],
+    splashColor: Colors.indigo[900],
+    textColor: Colors.white,                          onPressed: () { Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => SignupScreen()),
+    );
+    },
+
+    child: Column(
+    children:<Widget>[
+    new Padding(
+    padding: const EdgeInsets.only(top:8.0),
+    ),
+    new Icon(FontAwesomeIcons.userPlus),new Padding(
+    padding: const EdgeInsets.only(top:8.0),
+    ),
+    Text("Signup"),
+    new Padding(
+    padding: const EdgeInsets.only(top:8.0),
+    ),
+    ],
+
+    )
+
+    ),
+    )],
+
+
+    ),
+    ),
+    )
+    ],
+    ),
+    ),
+    ]),
+    );
+
+  }
+}
+
