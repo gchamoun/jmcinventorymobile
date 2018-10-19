@@ -6,16 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 Future<Post> fetchPost() async {
-  final response =
-      await http.get('https://jsonplaceholder.typicode.com/posts/1');
+  final response = await http.get(
+    'https://jsonplaceholder.typicode.com/posts/1',
+    headers: {HttpHeaders.authorizationHeader: "Basic your_api_token_here"},
+  );
+  final responseJson = json.decode(response.body);
 
-  if (response.statusCode == 200) {
-    // If the call to the server was successful, parse the JSON
-    return Post.fromJson(json.decode(response.body));
-  } else {
-    // If that call was not successful, throw an error.
-    throw Exception('Failed to load post');
-  }
+  return Post.fromJson(responseJson);
 }
 
 class Post {
