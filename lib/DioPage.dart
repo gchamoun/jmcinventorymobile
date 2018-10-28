@@ -10,8 +10,17 @@ import 'package:cookie_jar/cookie_jar.dart';
 class DioPage extends StatelessWidget {
 
   fetchData()async {
-    Dio dio = new Dio();
-    Response<String> response=await dio.get("https://www.baidu.com/");
+    var dio = new Dio();
+    dio.options.baseUrl = "http://localhost:8080";
+
+    FormData formData = new FormData.from({
+      "email": "admin@admin.com",
+      "password": "1234",
+      "isMobile": true,
+
+    });
+    //Response response = await dio.post("/token", data: formData);
+    Response response = await dio.post("http://localhost:8080/auth/login", data: formData);
     print(response.data);
   }
   @override
