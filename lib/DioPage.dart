@@ -11,7 +11,7 @@ class DioPage extends StatelessWidget {
 
   fetchData()async {
     var dio = new Dio();
-    dio.options.baseUrl = "http://localhost:8080";
+    dio.options.baseUrl = "http://172.31.172.113:80/auth/login";
 
     FormData formData = new FormData.from({
       "email": "admin@admin.com",
@@ -19,9 +19,13 @@ class DioPage extends StatelessWidget {
       "isMobile": true,
 
     });
+    print("***********************************************************************************");
     //Response response = await dio.post("/token", data: formData);
-    Response response = await dio.post("http://localhost:8080/auth/login", data: formData);
+    Response response = await dio.post("http://172.31.172.113:80/auth/login", data: formData);
+    print("***********************************************************************************");
     print(response.data);
+    print("***********************************************************************************");
+
   }
   @override
   Widget build(BuildContext context) {
