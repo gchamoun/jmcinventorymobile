@@ -28,9 +28,17 @@ class Checkout extends StatefulWidget {
     });
   }
   onCheckout() {
-    items.forEach((item) =>
-      print('TODO: checking out item ' + item.description)
-    );
+    items.forEach((item) {
+      inventoryService.checkoutItem(item.id).then((result){
+        if(result){
+          print('Successfully checkout item: ' + item.toString());
+        }
+        else
+        {
+          print('error while checking out item: ' + item.toString());
+        }
+      });
+    });
   }
   // This is the method to activate the camera and scan for qr code. If found, set the global variable qrString to the string result of the scan.
   // I also added the successful scan result to a list that is rendered above
