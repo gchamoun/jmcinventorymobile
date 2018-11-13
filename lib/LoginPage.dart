@@ -1,154 +1,147 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:validate/validate.dart';
 import 'package:dio/dio.dart';
-import 'package:jmcinventory/SignupScreen.dart';
+import 'dart:convert';
+
+void main() => runApp(new MaterialApp(
+  title: 'Forms in Flutter',
+  home: new LoginPage(),
+));
+
+class User {
+  final String id;
+
+  User(this.id);
+
+  User.fromJson(Map<String, String> json)
+      : id = json['id'];
+  Map<String, String> toJson() =>
+      {
+        'id': id
+      };
+}
 
 class LoginPage extends StatefulWidget {
   @override
-  State createState() => new LoginPageState();
+  State<StatefulWidget> createState() => new _LoginPageState();
 }
 
-class LoginPageState extends State<LoginPage>
-    with SingleTickerProviderStateMixin {
-  Animation<double> _iconAnimation;
-  AnimationController _iconAnimationController;
+class _LoginData {
+  String email = '';
+  String password = '';
+}
 
-  @override
-  void initState() {
-    super.initState();
-    _iconAnimationController = new AnimationController(
-        vsync: this, duration: new Duration(milliseconds: 500));
-    _iconAnimation = new CurvedAnimation(
-      parent: _iconAnimationController,
-      curve: Curves.bounceOut,
-    );
-    _iconAnimation.addListener(() => this.setState(() {}));
-    _iconAnimationController.forward();
+class _LoginPageState extends State<LoginPage> {
+  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  _LoginData _data = new _LoginData();
+
+  String _validateEmail(String value) {
+    // If empty value, the isEmail function throw a error.
+    // So I changed this function with try and catch.
+    try {
+      Validate.isEmail(value);
+    } catch (e) {
+      return 'The E-mail Address must be a valid email address.';
+    }
+
+    return null;
   }
+
+  String _validatePassword(String value) {
+    if (value.length < 3) {
+      return 'The Password must be at least 8 characters.';
+    }
+
+    return null;
+  }
+
+  void submit() {
+    // First validate form.
+    if (this._formKey.currentState.validate()) {
+      _formKey.currentState.save(); // Save our form now.
+      fetchData();
+    }
+  }
+  fetchData()async {
+    var dio = new Dio();
+    dio.options.baseUrl = "http://192.168.64.2:80/auth/login";
+
+    FormData formData = new FormData.from({
+      "email": '${_data.email}',
+      "password": '${_data.password}'
+    });
+
+    print("***********************************************************************************");
+    //Response response = await dio.post("/token", data: formData);
+    Response response = await dio.post("http://192.168.64.2:80/auth/mobile_login", data: formData);
+    Map userMap = json.decode(response.data);
+    var user = new User.fromJson(userMap);
+    print("***********************************************************************************");
+    print('Howdy, ${user.id}!');
+
+    print("***********************************************************************************");
+  }
+
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery
+        .of(context)
+        .size;
 
-    return new Scaffold(resizeToAvoidBottomPadding: false,
-      backgroundColor: Colors.white,
-      body: new Stack(fit: StackFit.expand, children: <Widget>[
-        new Image(
-          image: new AssetImage("assets/Samford.jpg"),
-          fit: BoxFit.cover,
-          colorBlendMode: BlendMode.darken,
-          color: Colors.black87,
-        ),
-        new Theme(
-          data: new ThemeData(
-              brightness: Brightness.dark,
-              inputDecorationTheme: new InputDecorationTheme(
-                // hintStyle: new TextStyle(color: Colors.blue, fontSize: 20.0),
-                labelStyle:
-                new TextStyle(color: Colors.white, fontSize: 20.0),
-              )),
-          isMaterialAppTheme: true,
-          child: new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Image(
-                  image: new AssetImage("assets/jmcLogo.jpg"),height: 150.00),
-
-              new Container(
-                padding: const EdgeInsets.all(40.0),
-                child: new Form(
-                  autovalidate: true,
-                  child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      new TextFormField(
-                        decoration: new InputDecoration(
-                            labelText: "Enter Email", fillColor: Colors.white),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      new TextFormField(
-                        decoration: new InputDecoration(
-                            labelText: "Enter Password",fillColor: Colors.white
-                        ),
-                        obscureText: true,
-                        keyboardType: TextInputType.text,
-                      ),
-
-                      new Padding(
-                        padding: const EdgeInsets.only(top:40.0),
-                      ),
-
-                      new Row(     mainAxisSize: MainAxisSize.max,
-
-                        children: <Widget>[
-
-                          new MaterialButton(
-
-                              height: 50.0,
-                              minWidth: 110.0,
-                              color: Colors.indigo[900],
-                              splashColor: Colors.indigo[900],
-                              textColor: Colors.white,                          onPressed: () { Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SignupScreen()),
-                          );
-                          },
-
-                              child: Column(
-                                children:<Widget>[
-                                  new Padding(
-                                    padding: const EdgeInsets.only(top:8.0),
-                                  ),
-                                  new Icon(FontAwesomeIcons.userPlus),new Padding(
-                                    padding: const EdgeInsets.only(top:8.0),
-                                  ),
-                                  Text("Signup"),
-                                  new Padding(
-                                    padding: const EdgeInsets.only(top:8.0),
-                                  ),
-                                ],
-
-                              )
-
-                          ),
-                          new Padding(
-                            padding: const EdgeInsets.only(left: 50.0),
-                          ),
-                          new MaterialButton(
-
-                              height: 50.0,
-                              minWidth: 110.0,
-                              color: Colors.indigo[900],
-                              splashColor: Colors.indigo[900],
-                              textColor: Colors.white,                          onPressed: () {},
-
-                              child: Column(
-                                children:<Widget>[
-                                  new Padding(
-                                    padding: const EdgeInsets.only(top:8.0),
-                                  ),
-                                  new Icon(FontAwesomeIcons.signInAlt),
-                                  new Padding(
-                                    padding: const EdgeInsets.only(top:8.0),
-                                  ),
-
-                                  Text("Login"),
-                                  new Padding(
-                                    padding: const EdgeInsets.only(top:8.0),
-                                  ),
-                                ],
-
-                              )
-
-                          )],
-                      )],
-
-                  ),
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Login'),
+      ),
+      body: new Container(
+          padding: new EdgeInsets.all(20.0),
+          child: new Form(
+            key: this._formKey,
+            child: new ListView(
+              children: <Widget>[
+                new TextFormField(
+                    keyboardType: TextInputType.emailAddress,
+                    // Use email input type for emails.
+                    decoration: new InputDecoration(
+                        hintText: 'you@example.com',
+                        labelText: 'E-mail Address'
+                    ),
+                    validator: this._validateEmail,
+                    onSaved: (String value) {
+                      this._data.email = value;
+                    }
                 ),
-              )
-            ],
-          ),
-        ),
-      ]),
+                new TextFormField(
+                    obscureText: true, // Use secure text for passwords.
+                    decoration: new InputDecoration(
+                        hintText: 'Password',
+                        labelText: 'Enter your password'
+                    ),
+                    validator: this._validatePassword,
+                    onSaved: (String value) {
+                      this._data.password = value;
+                    }
+                ),
+                new Container(
+                  width: screenSize.width,
+                  child: new RaisedButton(
+                    child: new Text(
+                      'Login',
+                      style: new TextStyle(
+                          color: Colors.white
+                      ),
+                    ),
+                    onPressed: this.submit,
+                    color: Colors.blue,
+                  ),
+                  margin: new EdgeInsets.only(
+                      top: 20.0
+                  ),
+                )
+              ],
+            ),
+          )
+      ),
     );
   }
-
 }
+
