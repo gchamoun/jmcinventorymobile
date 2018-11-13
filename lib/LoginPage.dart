@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:validate/validate.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
+import 'package:jmcinventory/User.dart';
 
 void main() => runApp(new MaterialApp(
   title: 'Forms in Flutter',
   home: new LoginPage(),
 ));
 
-class User {
-  final String id;
-
-  User(this.id);
-
-  User.fromJson(Map<String, String> json)
-      : id = json['id'];
-  Map<String, String> toJson() =>
-      {
-        'id': id
-      };
-}
+//class User {
+//  final String id;
+//
+//  User(this.id);
+//
+//  User.fromJson(Map<String, String> json)
+//      : id = json['id'];
+//  Map<String, String> toJson() =>
+//      {
+//        'id': id
+//      };
+//}
 
 class LoginPage extends StatefulWidget {
   @override
@@ -73,9 +74,10 @@ class _LoginPageState extends State<LoginPage> {
 
     print("***********************************************************************************");
     //Response response = await dio.post("/token", data: formData);
-    Response response = await dio.post("http://192.168.64.2:80/auth/mobile_login", data: formData);
-    Map userMap = json.decode(response.data);
-    var user = new User.fromJson(userMap);
+    Response response = await dio.post("http://192.168.2.11:80/auth/mobile_login", data: formData);
+//    Map userMap = json.decode(response.data);
+    print(response.data);
+    var user = new User.fromJson(response.data);
     print("***********************************************************************************");
     print('Howdy, ${user.id}!');
 
