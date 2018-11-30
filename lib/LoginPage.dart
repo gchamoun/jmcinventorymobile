@@ -3,6 +3,8 @@ import 'package:validate/validate.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:jmcinventory/User.dart';
+import 'package:jmcinventory/Checkout.dart';
+import 'package:jmcinventory/HomeScreen.dart';
 
 void main() => runApp(new MaterialApp(
   title: 'Forms in Flutter',
@@ -63,6 +65,34 @@ class _LoginPageState extends State<LoginPage> {
       fetchData();
     }
   }
+
+  Future<void> _neverSatisfied() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Invalid username or password'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Please try again.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Back'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   fetchData()async {
     var dio = new Dio();
     dio.options.baseUrl = "http://192.168.64.2:80/auth/login";
@@ -72,16 +102,27 @@ class _LoginPageState extends State<LoginPage> {
       "password": '${_data.password}'
     });
 
-    print("***********************************************************************************");
     //Response response = await dio.post("/token", data: formData);
-    Response response = await dio.post("http://192.168.2.11:80/auth/mobile_login", data: formData);
+    Response response = await dio.post("http://192.168.1.213/auth/mobile_login", data: formData);
 //    Map userMap = json.decode(response.data);
-    print(response.data);
-    var user = new User.fromJson(response.data);
-    print("***********************************************************************************");
-    print('Howdy, ${user.id}!');
+//    print("***********************************************************************************");
+//
+//    print(response.data);
+//    print("***********************************************************************************");
 
-    print("***********************************************************************************");
+    var user = new User.fromJson(response.data);
+    if(user.id == 0){
+      print("Invalid username or password");
+      _neverSatisfied();
+      } else {
+      print('Howdy, ${user.id}!');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+
+    }
+
   }
 
   @override
@@ -94,7 +135,9 @@ class _LoginPageState extends State<LoginPage> {
       appBar: new AppBar(
         title: new Text('Login'),
       ),
+
       body: new Container(
+
           padding: new EdgeInsets.all(20.0),
           child: new Form(
             key: this._formKey,
@@ -142,8 +185,10 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           )
+
       ),
     );
+
   }
 }
 

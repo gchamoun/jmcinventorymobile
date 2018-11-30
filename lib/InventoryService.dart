@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:jmcinventory/Item.dart';
 
 class InventoryService {
-  String baseUrl = "http://192.168.1.124:80/";
+  String baseUrl = "http://1192.168.1.254/";
   var http = new Dio();
 
   Future<Item> getItem(String itemId) async{
