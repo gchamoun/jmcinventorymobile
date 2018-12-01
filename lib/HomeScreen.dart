@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
                 tooltip: 'Increase volume by 10%',
                 onPressed: () {      Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => UserPage()),
+                  MaterialPageRoute(builder: (context) => Checkout()),
                 );
                 },
               ),
@@ -58,7 +58,7 @@ class HomeScreen extends StatelessWidget {
                   textColor: Colors.white,
                   onPressed: () {      Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => UserPage()),
+                    MaterialPageRoute(builder: (context) => Checkout()),
                   );
 
                     // Do something here
@@ -84,6 +84,10 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.blue,
                 textColor: Colors.white,
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserPage()),
+                  );
                   // Do something here
                 },
               ),

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:jmcinventory/Checkout.dart';
+import 'package:jmcinventory/User.dart';
 
 class _LoginData
 {
@@ -25,13 +26,12 @@ class _UserPageState extends State<UserPage> {
     dio.options.baseUrl = "http://192.168.64.2:80/users/mobile_getallusers";
 
     //Response response = await dio.post("/token", data: formData);
-    Response response = await dio.post("http://192.168.1.213/users/mobile_getallusers");
+    Response response = await dio.post("http://192.168.1.213/mobile/getusers");
 var jsonData = json.decode(response.data);
 
 List<User> users = [];
 for(var u in jsonData){
-  User user= User(u["email"]);
-
+  User user= User.fromJson(u);
   users.add(user);
 }     print(users.length);
 
@@ -81,7 +81,4 @@ return users;
     );
   }
 }
-class User {
-  final String email;
-  User(this.email);
-}
+
