@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:jmcinventory/Item.dart';
 
 class InventoryService {
-  String baseUrl = "http://1192.168.1.254/";
+  String baseUrl = "http://192.168.2.11:80/";
   var http = new Dio();
 
   Future<Item> getItem(String itemId) async{
@@ -19,4 +19,9 @@ class InventoryService {
     print(response.data);
     return (response.data == 1)? true: false;
   }
-}
+  Future<bool> checkinItem(int itemId) async{
+    print('checking in item: ' + itemId.toString() + 'from codeigniter');
+    Response response = await http.post(baseUrl + 'inventory/mobile_checkin/' + itemId.toString());
+    print(response.data);
+    return (response.data == 1)? true: false;
+  }}
