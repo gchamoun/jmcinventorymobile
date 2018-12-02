@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'package:jmcinventory/User.dart';
 import 'package:jmcinventory/Checkout.dart';
 import 'package:jmcinventory/HomeScreen.dart';
+import 'package:jmcinventory/global.dart';
+import 'dart:async';
 
 void main() => runApp(new MaterialApp(
   title: 'Forms in Flutter',
@@ -95,7 +97,6 @@ class _LoginPageState extends State<LoginPage> {
 
   fetchData()async {
     var dio = new Dio();
-    dio.options.baseUrl = "http://192.168.64.2:80/auth/login";
 
     FormData formData = new FormData.from({
       "email": '${_data.email}',
@@ -103,13 +104,14 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     //Response response = await dio.post("/token", data: formData);
-    Response response = await dio.post("http://192.168.1.213/auth/mobile_login", data: formData);
+    Response response = await dio.post(baseUrl + "/auth/mobile_login", data: formData);
 //    Map userMap = json.decode(response.data);
 //    print("***********************************************************************************");
 //
 //    print(response.data);
 //    print("***********************************************************************************");
 
+    print(baseUrl + "/auth/mobile_login");
     var user = new User.fromJson(response.data);
     if(user.id == 0){
       print("Invalid username or password");

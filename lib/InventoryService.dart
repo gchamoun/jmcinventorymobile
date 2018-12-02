@@ -1,16 +1,18 @@
 import 'package:dio/Dio.dart';
 import 'dart:async';
 import 'package:jmcinventory/Item.dart';
+import 'package:jmcinventory/global.dart';
+ import 'dart:convert';
 
 class InventoryService {
-  String baseUrl = "http://192.168.2.11:80/";
   var http = new Dio();
 
   Future<Item> getItem(String itemId) async{
     print('Requesting item: ' + itemId + ' from codeigniter');
-    Response response = await http.post(baseUrl + 'inventory/mobile_getitem/' + itemId);
+    Response response = await http.post(baseUrl + '/mobile/getItem/' + itemId);
+    print(response.data);
     print('converting JSON to Item object');
-    var item = new Item.fromJson(response.data);
+    var item = new Item.fromJson(jsonDecode(response.data));
     return item;
   }
   Future<bool> checkoutItem(int itemId) async{
@@ -24,4 +26,12 @@ class InventoryService {
     Response response = await http.post(baseUrl + 'inventory/mobile_checkin/' + itemId.toString());
     print(response.data);
     return (response.data == 1)? true: false;
-  }}
+  }
+
+  Future<bool> GetReservation(int itemId) async{
+    print('checking in item: ' + itemId.toString() + 'from codeigniter');
+    Response response = await http.post(baseUrl + 'inventory/mobile_checkin/' + itemId.toString());
+    print(response.data);
+    return (response.data == 1)? true: false;
+  }
+}
