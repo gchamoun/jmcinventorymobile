@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:jmcinventory/User.dart';
 
 import 'package:cookie_jar/cookie_jar.dart';
 
@@ -11,7 +12,7 @@ class DioPage extends StatelessWidget {
 
   fetchData()async {
     var dio = new Dio();
-    dio.options.baseUrl = "http://172.31.172.113:80/auth/login";
+    dio.options.baseUrl = "http://172.31.131.169:80/auth/mobile_login";
 
     FormData formData = new FormData.from({
       "email": "admin@admin.com",
@@ -21,9 +22,19 @@ class DioPage extends StatelessWidget {
     });
     print("***********************************************************************************");
     //Response response = await dio.post("/token", data: formData);
-    Response response = await dio.post("http://172.31.172.113:80/auth/login", data: formData);
+    Response response = await dio.post("http://172.31.131.169:80/auth/mobile_login", data: formData);
     print("***********************************************************************************");
-    print(response.data);
+    print(response.data.toString());
+
+//    json
+//    User user2 = new User()
+//    User user = User.fromJson(response.data);
+
+//    if(user.id != "0"){
+//      print("User Logged in");
+//    }else{
+//      print("Not valid login");
+//    }
     print("***********************************************************************************");
 
   }

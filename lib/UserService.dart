@@ -3,8 +3,14 @@ import 'dart:async';
 import 'package:jmcinventory/User.dart';
 
 class UserService{
-  Future<User> LoginUser(User user){
-  // make http request and return user object
+  String baseUrl = "http://192.168.2.11:80/";
+  var http = new Dio();
+
+  Future<User> LoginSubmit(FormData formData) async{
+
+    Response response = await http.post(baseUrl + "/auth/mobile_login", data: formData);
+
+    // make http request and return user object
     //else return submitted user object with loggedIn = false
   }
   Future<User> logoutUser(User user){
