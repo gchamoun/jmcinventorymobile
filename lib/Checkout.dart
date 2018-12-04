@@ -4,6 +4,7 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:jmcinventory/Item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Checkout extends StatefulWidget {
@@ -12,16 +13,23 @@ class Checkout extends StatefulWidget {
   }
 
   class _MyAppState extends State<Checkout> {
-  InventoryService inventoryService = new InventoryService();
+    String userEmail = "";
+
+    InventoryService inventoryService = new InventoryService();
   String qrString = "";
   List<Item> items = [];
+
+
+
 
   @override
   initState() {
     super.initState();
+    this.getUserId();
   }
 
   void onRemoveItem(int index) {
+
     items.removeAt(index);
     setState(() {
      print("Removing from list at index: " + index.toString());
@@ -43,6 +51,7 @@ class Checkout extends StatefulWidget {
   // This is the method to activate the camera and scan for qr code. If found, set the global variable qrString to the string result of the scan.
   // I also added the successful scan result to a list that is rendered above
   Future scan() async {
+
     try {
       String qrString = await BarcodeScanner.scan();
       addInventoryItem(qrString);
@@ -66,6 +75,15 @@ class Checkout extends StatefulWidget {
     items.add(item);
     setState(() => {});
   }
+  Future getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final currentUserEmail = prefs.getString('userEmail') ?? 0;
+    setState(() {
+      userEmail = currentUserEmail;
+    });
+    print(userEmail);
+  }
+
 
 
   @override
@@ -73,7 +91,7 @@ class Checkout extends StatefulWidget {
   return new MaterialApp(
   home: new Scaffold(
     appBar: AppBar(
-        title: const Text('Checkout'),
+        title:  Text("Checkout"),
         actions: <Widget>[
     // action button
           OutlineButton.icon(
@@ -92,13 +110,12 @@ class Checkout extends StatefulWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const ListTile(
-            title: Text('User: John-Anthony Jimenez'),
-            subtitle: Text('SUID: 90012345'),
+           ListTile(
+            title: Text(userEmail),
             trailing: FlatButton(
-              child: const Text('Edit User'),
-              textColor: Colors.white,
-              onPressed: null,
+//              child: const Text('Edit User'),
+//              textColor: Colors.white,
+//              onPressed: null,
             ),
           ),
         ],

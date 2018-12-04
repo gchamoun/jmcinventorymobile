@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:jmcinventory/User.dart';
 import 'package:jmcinventory/Checkout.dart';
 import 'package:jmcinventory/HomeScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(new MaterialApp(
   title: 'Forms in Flutter',
@@ -115,8 +116,16 @@ class _LoginPageState extends State<LoginPage> {
       print("Invalid username or password");
       _neverSatisfied();
       } else {
-      print('Howdy, ${user.id}!');
+      final prefs = await SharedPreferences.getInstance();
+
+// set value
+
+      prefs.setInt('userId', user.id);
+      final counter = prefs.getInt('userId') ?? 0;
+
+      print('Howdy, $counter');
       Navigator.push(
+
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
       );
