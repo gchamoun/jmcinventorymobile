@@ -5,7 +5,6 @@ class Item{
   String dateModified;
   String dateDeleted;
   String serial;
-  String title;
   String description;
   var accessories;
 
@@ -17,7 +16,6 @@ class Item{
     this.dateModified,
     this.dateDeleted,
     this.serial,
-    this.title,
     this.description,
     this.accessories
   });
@@ -25,12 +23,11 @@ class Item{
     return Item(
         id: int.tryParse(parsedJson['id']),
         categoryId : int.tryParse(parsedJson['category_id']),
-        dateAdded :  parsedJson ['dateadded'],
+        dateAdded :   parsedJson ['dateadded'],
         dateModified: parsedJson['datemodified'],
         dateDeleted: parsedJson['datedeleted'],
-        serial: parsedJson['serial'],
-        title: parsedJson['title'],
         description: parsedJson['description'],
+        serial: parsedJson['serial'],
         accessories: parsedJson['accessories'],
     );
   }

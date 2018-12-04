@@ -36,17 +36,7 @@ class Checkout extends StatefulWidget {
     });
   }
   onCheckout() {
-    items.forEach((item) {
-      inventoryService.checkoutItem(item.id).then((result){
-        if(result){
-          print('Successfully checkout item: ' + item.toString());
-        }
-        else
-        {
-          print('error while checking out item: ' + item.toString());
-        }
-      });
-    });
+    inventoryService.checkoutItems(items);
   }
   // This is the method to activate the camera and scan for qr code. If found, set the global variable qrString to the string result of the scan.
   // I also added the successful scan result to a list that is rendered above
@@ -54,7 +44,7 @@ class Checkout extends StatefulWidget {
 
     try {
       String qrString = await BarcodeScanner.scan();
-      addInventoryItem(qrString);
+      addInventoryItem(int.tryParse(qrString));
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         setState(() {
@@ -70,7 +60,7 @@ class Checkout extends StatefulWidget {
     }
   }
 
-  Future addInventoryItem(String itemId)async {
+  Future addInventoryItem(int itemId)async {
     Item item = await inventoryService.getItem(itemId);
     items.add(item);
     setState(() => {});
@@ -78,6 +68,8 @@ class Checkout extends StatefulWidget {
   Future getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final currentUserEmail = prefs.getString('userEmail') ?? 0;
+    final currentEmployee = prefs.getInt('employeeId') ?? 0;
+    print('Employee Id: ' + currentEmployee.toString());
     setState(() {
       userEmail = currentUserEmail;
     });
@@ -112,11 +104,11 @@ class Checkout extends StatefulWidget {
         children: <Widget>[
            ListTile(
             title: Text(userEmail),
-            trailing: FlatButton(
-//              child: const Text('Edit User'),
-//              textColor: Colors.white,
-//              onPressed: null,
-            ),
+//            trailing: FlatButton(
+////              child: const Text('Edit User'),
+////              textColor: Colors.white,
+////              onPressed: null,
+//            ),
           ),
         ],
       ),

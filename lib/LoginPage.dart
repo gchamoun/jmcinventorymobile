@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'package:jmcinventory/User.dart';
 import 'package:jmcinventory/Checkout.dart';
 import 'package:jmcinventory/HomeScreen.dart';
+import 'package:jmcinventory/global.dart';
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -97,7 +99,6 @@ class _LoginPageState extends State<LoginPage> {
 
   fetchData()async {
     var dio = new Dio();
-    dio.options.baseUrl = "http://192.168.64.2:80/auth/login";
 
     FormData formData = new FormData.from({
       "email": '${_data.email}',
@@ -105,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     //Response response = await dio.post("/token", data: formData);
-    Response response = await dio.post("http://192.168.1.213/auth/mobile_login", data: formData);
+    Response response = await dio.post(baseUrl + "/auth/mobile_login", data: formData);
 //    Map userMap = json.decode(response.data);
 //    print("***********************************************************************************");
 //
@@ -118,6 +119,7 @@ class _LoginPageState extends State<LoginPage> {
 //    print(json.decode(response.data));
 //    print("!!!!!!");
 
+    print(baseUrl + "/auth/mobile_login");
     var user = new User.fromJson(response.data);
 print(user.id);
     if(user.id == 0){
@@ -128,8 +130,8 @@ print(user.id);
 
 // set value
 
-      prefs.setInt('userId', user.id);
-      final counter = prefs.getInt('userId') ?? 0;
+      prefs.setInt('employeeId', user.id);
+      final counter = prefs.getInt('employeeId') ?? 0;
 
       print('Howdy, $counter');
       Navigator.push(
