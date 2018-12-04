@@ -49,10 +49,14 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.blue,
                 iconSize: 100.0,
                 tooltip: 'Increase volume by 10%',
-                onPressed: () {      Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserPage()),
-                );
+                onPressed: () {
+
+                  setScreen(1);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserPage()),
+                  );
+                  // Do something here
                 },
               ),
 
@@ -62,11 +66,13 @@ class HomeScreen extends StatelessWidget {
                   height: 100.0,
                   color: Colors.blue,
                   textColor: Colors.white,
-                  onPressed: () {      Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => UserPage()),
-                  );
+                  onPressed: () {
 
+                    setScreen(1);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => UserPage()),
+                    );
                     // Do something here
                   },
 
@@ -80,11 +86,13 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.blue,
                 iconSize: 100.0,
                 tooltip: 'Increase volume by 10%',
-                onPressed: () {      Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Checkin()),
-                );
+                onPressed: () {
 
+                  setScreen(0);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserPage()),
+                  );
                   // Do something here
                 },
               ),
@@ -97,9 +105,11 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.blue,
                 textColor: Colors.white,
                 onPressed: () {
-                  Navigator.push(
+
+                 setScreen(0);
+    Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Checkin()),
+                    MaterialPageRoute(builder: (context) => UserPage()),
                   );
                   // Do something here
                 },
@@ -112,4 +122,12 @@ class HomeScreen extends StatelessWidget {
     );
 
   }
+  Future setScreen(screen) async {
+  final prefs = await SharedPreferences.getInstance();
+// set value
+  prefs.setInt('Checkout', screen);
+  print(screen);
 }
+
+  }
+

@@ -6,6 +6,8 @@ import 'package:jmcinventory/global.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:jmcinventory/Checkout.dart';
+import 'package:jmcinventory/Checkin.dart';
+
 import 'package:jmcinventory/User.dart';
 import 'package:jmcinventory/Global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -99,13 +101,30 @@ class _UserPageState extends State<UserPage> {
   Future getUserId(index) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('userEmail', filteredNames[index]['email']);
+    prefs.setString('userId', filteredNames[index]['id']);
+
     final userEmail = prefs.getString('userEmail') ?? 0;
     print(userEmail);
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Checkout()),
-    );
 
+// set value
+
+    final checkout = prefs.getInt('Checkout') ?? 0;
+    print("!!!!!!!!!!");
+    print(checkout);
+    print("!!!!!!!!!!");
+    if(checkout == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Checkout()),
+      );
+    }
+    else{
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Checkin()),
+      );
+
+    }
   }
 
   void _searchPressed() {
@@ -127,7 +146,6 @@ class _UserPageState extends State<UserPage> {
       }
     });
   }
-
   void _getNames() async {
     final response = await dio.get('https://swapi.co/api/people');
 
