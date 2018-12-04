@@ -6,6 +6,7 @@ import 'package:jmcinventory/User.dart';
 import 'package:jmcinventory/Checkout.dart';
 import 'package:jmcinventory/HomeScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 void main() => runApp(new MaterialApp(
   title: 'Forms in Flutter',
@@ -110,8 +111,15 @@ class _LoginPageState extends State<LoginPage> {
 //
 //    print(response.data);
 //    print("***********************************************************************************");
+   print("test");
+    print(response.data);
+//    print("!!!!!!");
+//
+//    print(json.decode(response.data));
+//    print("!!!!!!");
 
     var user = new User.fromJson(response.data);
+print(user.id);
     if(user.id == 0){
       print("Invalid username or password");
       _neverSatisfied();

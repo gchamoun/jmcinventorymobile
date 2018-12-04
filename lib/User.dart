@@ -18,7 +18,7 @@ class User {
       return User(
         id: 0,
 //      roleId: int.tryParse(json['role_id']),
-//      email: json['email'],
+      email: json['email'],
 //      lastLogin: json['last_login'],
         loggedIn: false,
       );
@@ -29,7 +29,7 @@ class User {
       return User(
         id: int.tryParse(json['id']),
 //      roleId: int.tryParse(json['role_id']),
-//      email: json['email'],
+      email: json['email'],
 //      lastLogin: json['last_login'],
         loggedIn: false,
       );

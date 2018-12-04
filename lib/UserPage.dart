@@ -10,11 +10,6 @@ import 'package:jmcinventory/User.dart';
 import 'package:jmcinventory/Global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class userEmail {
-  final String email;
-
-  userEmail(this.email);
-}
 
 
 
