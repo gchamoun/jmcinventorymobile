@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:dio/dio.dart';
-import 'package:jmcinventory/Checkout.dart';
+import 'package:jmcinventory/Checkin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:jmcinventory/UserPage.dart';
 
 class HomeScreen extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
 
+
     return new Scaffold(appBar: AppBar(
+
       title: Text("Welcome"),
       automaticallyImplyLeading: false,
 
@@ -45,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                 tooltip: 'Increase volume by 10%',
                 onPressed: () {      Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Checkout()),
+                  MaterialPageRoute(builder: (context) => UserPage()),
                 );
                 },
               ),
@@ -58,7 +64,7 @@ class HomeScreen extends StatelessWidget {
                   textColor: Colors.white,
                   onPressed: () {      Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Checkout()),
+                    MaterialPageRoute(builder: (context) => UserPage()),
                   );
 
                     // Do something here
@@ -74,10 +80,17 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.blue,
                 iconSize: 100.0,
                 tooltip: 'Increase volume by 10%',
-                onPressed: () { },
+                onPressed: () {      Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Checkin()),
+                );
+
+                  // Do something here
+                },
               ),
 
               new MaterialButton(
+
                 child: Text("Check In"),
                 minWidth: 200.0,
                 height: 100.0,
@@ -86,7 +99,7 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => UserPage()),
+                    MaterialPageRoute(builder: (context) => Checkin()),
                   );
                   // Do something here
                 },
