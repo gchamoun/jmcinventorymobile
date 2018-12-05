@@ -8,11 +8,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fa1a42fe-6926-493c-b5aa-46bd944715c0" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/lib/Checkin.dart" afterPath="$PROJECT_DIR$/lib/Checkin.dart" />
-      <change beforePath="$PROJECT_DIR$/lib/Checkout.dart" afterPath="$PROJECT_DIR$/lib/Checkout.dart" />
-      <change beforePath="$PROJECT_DIR$/lib/InventoryService.dart" afterPath="$PROJECT_DIR$/lib/InventoryService.dart" />
-      <change beforePath="$PROJECT_DIR$/lib/LoginPage.dart" afterPath="$PROJECT_DIR$/lib/LoginPage.dart" />
-      <change beforePath="$PROJECT_DIR$/lib/UserPage.dart" afterPath="$PROJECT_DIR$/lib/UserPage.dart" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -60,8 +55,8 @@
       <file leaf-file-name="Checkin.dart" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/Checkin.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="143">
-              <caret line="145" column="44" lean-forward="true" selection-start-line="145" selection-start-column="44" selection-end-line="145" selection-end-column="44" />
+            <state relative-caret-position="313">
+              <caret line="155" column="12" lean-forward="true" selection-start-line="155" selection-start-column="12" selection-end-line="155" selection-end-column="12" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -397,7 +392,14 @@
       <option name="project" value="LOCAL" />
       <updated>1543958386162</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added pref user email and id. Also made user page flow correctly navigate to checkin or checkout">
+      <created>1543982203249</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1543982203249</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TodoView">
@@ -941,8 +943,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/Checkin.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="145" column="44" lean-forward="true" selection-start-line="145" selection-start-column="44" selection-end-line="145" selection-end-column="44" />
+        <state relative-caret-position="313">
+          <caret line="155" column="12" lean-forward="true" selection-start-line="155" selection-start-column="12" selection-end-line="155" selection-end-column="12" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
