@@ -26,6 +26,7 @@ class Checkout extends StatefulWidget {
   initState() {
     super.initState();
     this.getUserId();
+
   }
 
   void onRemoveItem(int index) {

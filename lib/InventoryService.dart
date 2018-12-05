@@ -4,6 +4,8 @@ import 'package:jmcinventory/Item.dart';
 import 'package:jmcinventory/global.dart';
  import 'dart:convert';
 
+
+
 class InventoryService {
   var http = new Dio();
 
@@ -37,9 +39,39 @@ class InventoryService {
 
     return true;
   }
-  Future<bool> checkinItem(int itemId) async{
+
+  Future<List<Item>> getUsersItems (int userId) async{
+
+     List<Item> itemList = new List();
+    final response = await http.post(baseUrl + 'mobile/getUsersCheckin/' + userId.toString());
+
+Map itemMap = json.decode(response.data);
+
+
+    List tempList = new List();
+    for (int i = 0; i < itemMap["results"].length; i++) {
+      print(itemMap["results"][i]);
+      tempList.add(itemMap["results"][i]);
+    }
+
+     for(var jsonString in tempList){
+      int id = (int.tryParse(jsonString["item_id"]));
+
+      Item item = await getItem(id);
+
+      itemList.add(item);
+  }
+  print(itemList);
+
+  return itemList;
+    }
+
+
+
+  Future<bool> checkinItem(int workerCheckinId, int itemId) async{
     print('checking in item: ' + itemId.toString() + 'from codeigniter');
-    Response response = await http.post(baseUrl + 'inventory/mobile_checkin/' + itemId.toString());
+    Response response = await http.post(baseUrl + 'mobile/individualCheckin/' + workerCheckinId.toString() + '/' + itemId.toString());
+    print(itemId.toString());
     print(response.data);
     return (response.data == 1)? true: false;
   }

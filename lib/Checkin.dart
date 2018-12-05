@@ -4,6 +4,8 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:jmcinventory/Item.dart';
+import 'package:jmcinventory/HomeScreen.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -14,25 +16,39 @@ class Checkin extends StatefulWidget {
 
 class _MyAppState extends State<Checkin> {
   String userEmail = "";
+  int userId = 0;
 
   InventoryService inventoryService = new InventoryService();
   String qrString = "";
   List<Item> items = [];
-
-
+  List<int> indexOfCheckouts = [];
 
 
   @override
   initState() {
     super.initState();
     this.getUserId();
-  }
+    this.getItems();
 
+  }
+  void getItems () async{
+    print("User ID NEW");
+    print(userId);
+    final prefs = await SharedPreferences.getInstance();
+
+    final userIdGet = prefs.getInt('userId') ?? 0;
+
+    items = await inventoryService.getUsersItems(userIdGet);
+
+    setState(() {
+      items = items;
+    });
+
+  }
   void onRemoveItem(int index) {
 
     items.removeAt(index);
     setState(() {
-      print("Removing from list at index: " + index.toString());
     });
   }
   onCheckout() {
@@ -64,27 +80,137 @@ class _MyAppState extends State<Checkin> {
     final prefs = await SharedPreferences.getInstance();
     final currentUserEmail = prefs.getString('userEmail') ?? 0;
     final currentEmployee = prefs.getInt('employeeId') ?? 0;
-    print('Employee Id: ' + currentEmployee.toString());
+    final userIdGet = prefs.getInt('userId') ?? 0;
     setState(() {
       userEmail = currentUserEmail;
+      userId = userIdGet;
+
     });
-    print(userEmail);
+    print("Userid:");
+    print(userId);
+
   }
 
   Future getUserItems(userId) async {
     final prefs = await SharedPreferences.getInstance();
     final currentUserEmail = prefs.getString('userEmail') ?? 0;
     final currentEmployee = prefs.getInt('employeeId') ?? 0;
-    print('Employee Id: ' + currentEmployee.toString());
+
     setState(() {
       userEmail = currentUserEmail;
     });
-    print(userEmail);
+  }
+
+  Future scanItem(itemId,index) async {
+    print("array before:");
+
+    indexOfCheckouts.add(index);
+    print("array after:");
+    print(indexOfCheckouts);
+//  scan();
+scan();
+
+  if (qrString == itemId.toString()){
+    final prefs = await SharedPreferences.getInstance();
+
+  final workerIdGet = prefs.getInt('employeeId') ?? 0;
+
+    inventoryService.checkinItem(workerIdGet,itemId);
+    _correctItem(items[index].description);
+
+  }
+  else {
+    _wrongItem();
+  }
   }
 
 
+  Future<void> _wrongItem() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('This is the wrong item'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Please try again.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Back'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('add message'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+
+          ],
+        );
 
 
+      },
+    );
+  }
+  Future<void> _correctItem(String itemName) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Successfully Checked out:'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(itemName),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Add Message'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Continue'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Checkin()),
+                );              },
+            ),
+
+          ],
+        );
+
+
+      },
+    );
+  }
+
+  Icon getIcon(int index){
+//    for (int i = 0; i < indexOfCheckouts.length; i++) {
+//      print("This is index checkout ");
+//      print(indexOfCheckouts[i]);
+//      print(" this is index");
+//      print(index);
+//        if(index == indexOfCheckouts[i]){
+//          return Icon(Icons.check);
+//        }
+//    }
+
+    return Icon(Icons.camera_alt);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,13 +220,6 @@ class _MyAppState extends State<Checkin> {
           title:  Text("Checkin"),
           actions: <Widget>[
             // action button
-            OutlineButton.icon(
-              onPressed: scan,
-              icon: Icon(Icons.camera_alt),
-              label: new Text("Scan Item"),
-              color: Colors.white,
-              textColor: Colors.white,
-            ),
           ],
         ),
         body: new Center(
@@ -129,12 +248,11 @@ class _MyAppState extends State<Checkin> {
                       itemCount: items.length,
                       itemBuilder: (BuildContext ctxt, int index) {
                         return ListTile(
-                            leading: const Icon(Icons.camera),
                             title: new Text(items[index].description),
                             trailing: IconButton(
-                              icon: Icon(Icons.cancel),
-                              onPressed: () => onRemoveItem(index),
-                              color: Colors.red,
+                              icon: getIcon(index),
+                              onPressed: () => scanItem(items[index].id, index),
+                              color: Colors.blue,
                             )
                         );
                       }
@@ -144,8 +262,11 @@ class _MyAppState extends State<Checkin> {
           ),
         ),
         bottomNavigationBar: new BottomAppBar(
-          child: RaisedButton(onPressed: onCheckout,
-            child: new Text("CHECKOUT"),
+          child: RaisedButton(onPressed: () =>     Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => HomeScreen()),
+    ),
+            child: new Text("Home"),
             color: Colors.blue,
             textColor: Colors.white,
           ),

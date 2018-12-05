@@ -121,7 +121,6 @@ class _LoginPageState extends State<LoginPage> {
 
     print(baseUrl + "/auth/mobile_login");
     var user = new User.fromJson(response.data);
-print(user.id);
     if(user.id == 0){
       print("Invalid username or password");
       _neverSatisfied();

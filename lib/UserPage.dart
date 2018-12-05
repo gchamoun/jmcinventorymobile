@@ -101,7 +101,10 @@ class _UserPageState extends State<UserPage> {
   Future getUserId(index) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('userEmail', filteredNames[index]['email']);
-    prefs.setString('userId', filteredNames[index]['id']);
+    prefs.setInt('userId', int.tryParse(filteredNames[index]['id']));
+    final userIdGet = prefs.getInt('userId') ?? 0;
+    print("user ID GET");
+    print(userIdGet);
 
     final userEmail = prefs.getString('userEmail') ?? 0;
     print(userEmail);
@@ -109,9 +112,6 @@ class _UserPageState extends State<UserPage> {
 // set value
 
     final checkout = prefs.getInt('Checkout') ?? 0;
-    print("!!!!!!!!!!");
-    print(checkout);
-    print("!!!!!!!!!!");
     if(checkout == 1) {
       Navigator.push(
         context,
@@ -119,6 +119,7 @@ class _UserPageState extends State<UserPage> {
       );
     }
     else{
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Checkin()),
@@ -155,7 +156,6 @@ class _UserPageState extends State<UserPage> {
 
     List tempList = new List();
     for (int i = 0; i < userMap['results'].length; i++) {
-      print(userMap['results'][i]);
       tempList.add(userMap['results'][i]);
     }
 
