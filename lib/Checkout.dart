@@ -177,7 +177,8 @@ class Checkout extends StatefulWidget {
                                 icon: Icon(Icons.cancel),
                                 onPressed: () => onRemoveItem(index),
                                 color: Colors.red,
-                              )
+                              ),
+                            onTap: () => itemDetailModal(index),
                           );
                         }
                     )
@@ -228,6 +229,42 @@ class Checkout extends StatefulWidget {
                 child: Text('Return Home'),
                 onPressed: () {
                   Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                },
+              ),
+
+            ],
+          );
+        },
+      );
+    }
+    Future<void> itemDetailModal(int index) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Item Details'),
+            content: new Center(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Text('Name: ' + items[index].description, textAlign: TextAlign.left,),
+                  new Text('Serial: ' + items[index].serial, textAlign: TextAlign.left,),
+                  new Text(items[index].accessories.toString(), textAlign: TextAlign.left,),
+                  //Here is the builder for my list of scanned qrcodes
+
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Back'),
+                onPressed: () {
+                  Navigator.pop(
                     context,
                     MaterialPageRoute(builder: (context) => HomeScreen()),
                   );

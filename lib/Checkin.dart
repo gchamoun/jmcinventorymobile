@@ -165,10 +165,17 @@ class _MyAppState extends State<Checkin> {
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
-              child: Text('Continue'),
+              child: Text('Add Item Note'),
               onPressed: () {
                 Navigator.of(context).pop();
-            },
+              },
+            ),
+            new FlatButton(
+              child: Text('Continue'),
+              onPressed: () =>     Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Checkin()),
+              ),
             ),
           ],
         );
