@@ -22,6 +22,7 @@ class Checkout extends StatefulWidget {
     List<Item> items = [];
     bool checkoutSuccess = false;
     bool checkoutStarted = false;
+    bool userWaiverNeed = true;
 
 
     @override
@@ -36,26 +37,54 @@ class Checkout extends StatefulWidget {
         print("Removing from list at index: " + index.toString());
       });
     }
+    Future onUserWaiverNeeded(){
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // return object of type Dialog
+            return AlertDialog(
+              title: new Text("User Waiver"),
+              content: new Text("I hereby take full responsibility for the items being checkout and will be liable for any items that are damaged or lost"),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                new FlatButton(
+                  child: new Text("I hereby agree"),
+                  onPressed: () {
+                    userWaiverNeed = false;
+                    Navigator.of(context).pop();
+                    onCheckout();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+    }
 
     Future onCheckout() async {
-      bool first = true;
-      for (Item item in items) {
-        print('Checking out Items. Current: ' + item.description.toString() +
-            ' first: ' + first.toString());
-        bool result = await inventoryService.checkoutItem(item.id, first);
-        if (result) {
-          print('after item ' + item.id.toString() + ' checkout');
+      bool waiverAccepted = false;
+      if(userWaiverNeed){
+        waiverAccepted = await onUserWaiverNeeded();
+      }else {
+        bool first = true;
+        for (Item item in items) {
+          print('Checking out Items. Current: ' + item.description.toString() +
+              ' first: ' + first.toString());
+          bool result = await inventoryService.checkoutItem(item.id, first);
+          if (result) {
+            print('after item ' + item.id.toString() + ' checkout');
+          }
+          if (first) {
+            first = false;
+          }
         }
-        if (first) {
-          first = false;
-        }
-      }
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString('message', 'Checkout successful! Return to home');
-      prefs.setInt('returnVa', 1);
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('message', 'Checkout successful! Return to home');
+        prefs.setInt('returnVa', 1);
 
-      successScreen('These Items');
-      return true;
+        successScreen('These Items');
+        return true;
+      }
     }
 
     // This is the method to activate the camera and scan for qr code. If found, set the global variable qrString to the string result of the scan.
@@ -124,7 +153,7 @@ class Checkout extends StatefulWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       ListTile(
-                        title: Text(userEmail),
+                        title: Text('Guest: ' + userEmail),
 //            trailing: FlatButton(
 ////              child: const Text('Edit User'),
 ////              textColor: Colors.white,
@@ -174,10 +203,23 @@ class Checkout extends StatefulWidget {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Successfully Checked out:'),
-            content: SingleChildScrollView(
-              child: ListBody(
+            content: new Center(
+              child: new Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(itemName),
+                  //Here is the builder for my list of scanned qrcodes
+                  new Expanded(
+                      child: new ListView.builder
+                        (
+                          itemCount: items.length,
+                          itemBuilder: (BuildContext ctxt, int index) {
+                            return ListTile(
+                                leading: const Icon(Icons.camera),
+                                title: new Text(items[index].description),
+                            );
+                          }
+                      )
+                  ),
                 ],
               ),
             ),

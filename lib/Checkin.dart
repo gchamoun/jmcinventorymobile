@@ -130,75 +130,48 @@ class _MyAppState extends State<Checkin> {
   }
 
 
-  Future<void> _wrongItem() async {
-    return showDialog<void>(
+
+
+  Future _wrongItem(){
+    showDialog(
       context: context,
-      barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
+        // return object of type Dialog
         return AlertDialog(
-          title: Text('This is the wrong item'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Please try again.'),
-              ],
-            ),
-          ),
+          title: new Text("This is the wrong item"),
+          content: Text('Please try again.'),
           actions: <Widget>[
-            FlatButton(
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
               child: Text('Back'),
               onPressed: () {
                 Navigator.of(context).pop();
-              },
+             },
             ),
-            FlatButton(
-              child: Text('add message'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-
           ],
         );
-
-
       },
     );
   }
-  Future<void> _correctItem(String itemName) async {
-    return showDialog<void>(
+
+  Future _correctItem(String itemName){
+    showDialog(
       context: context,
-      barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
+        // return object of type Dialog
         return AlertDialog(
-          title: Text('Successfully Checked in:'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(itemName),
-              ],
-            ),
-          ),
+          title: new Text("Successfully Checked in:"),
+          content: Text(itemName),
           actions: <Widget>[
-            FlatButton(
-              child: Text('Add Message'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
               child: Text('Continue'),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Checkin()),
-                );              },
+                Navigator.of(context).pop();
+            },
             ),
-
           ],
         );
-
-
       },
     );
   }
