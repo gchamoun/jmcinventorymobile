@@ -22,6 +22,7 @@ class _MyAppState extends State<Checkin> {
   String qrString = "";
   List<Item> items = [];
   List<int> indexOfCheckouts = [];
+  String message ='';
 
 
   @override
@@ -39,14 +40,19 @@ class _MyAppState extends State<Checkin> {
     final userIdGet = prefs.getInt('userId') ?? 0;
 
     items = await inventoryService.getUsersItems(userIdGet);
+    print(items.toString());
 
     setState(() {
-      items = items;
+      if(items.length == 0){
+        message = 'User has no items checked out';
+      }
+      else{
+        items = items;
+      }
     });
 
   }
   void onRemoveItem(int index) {
-
     items.removeAt(index);
     setState(() {
     });
@@ -60,7 +66,7 @@ class _MyAppState extends State<Checkin> {
 
     try {
       String qrString = await BarcodeScanner.scan();
-//      addInventoryItem(int.tryParse(qrString));
+      this.qrString = qrString;
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         setState(() {
@@ -102,26 +108,25 @@ class _MyAppState extends State<Checkin> {
   }
 
   Future scanItem(itemId,index) async {
+    final prefs = await SharedPreferences.getInstance();
+    final workerIdGet = prefs.getInt('employeeId') ?? 0;
+
+
     print("array before:");
 
     indexOfCheckouts.add(index);
     print("array after:");
     print(indexOfCheckouts);
-//  scan();
-scan();
-
-  if (qrString == itemId.toString()){
-    final prefs = await SharedPreferences.getInstance();
-
-  final workerIdGet = prefs.getInt('employeeId') ?? 0;
-
-    inventoryService.checkinItem(workerIdGet,itemId);
-    _correctItem(items[index].description);
-
-  }
-  else {
-    _wrongItem();
-  }
+    final result =  await scan();
+    print(qrString);
+    print (itemId.toString());
+    if (int.tryParse(qrString) == itemId){
+      inventoryService.checkinItem(workerIdGet,itemId);
+      _correctItem(items[index].description);
+    }
+    else {
+      _wrongItem();
+    }
   }
 
 
@@ -166,7 +171,7 @@ scan();
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Successfully Checked out:'),
+          title: Text('Successfully Checked in:'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -230,7 +235,7 @@ scan();
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ListTile(
-                      title: Text(userEmail),
+                      title: Text('Guest: ' + userEmail),
 //            trailing: FlatButton(
 ////              child: const Text('Edit User'),
 ////              textColor: Colors.white,
@@ -240,8 +245,8 @@ scan();
                   ],
                 ),
               ),
-              new Text(qrString),
               //Here is the builder for my list of scanned qrcodes
+              new Text(message),
               new Expanded(
                   child: new ListView.builder
                     (
@@ -249,11 +254,13 @@ scan();
                       itemBuilder: (BuildContext ctxt, int index) {
                         return ListTile(
                             title: new Text(items[index].description),
-                            trailing: IconButton(
-                              icon: getIcon(index),
-                              onPressed: () => scanItem(items[index].id, index),
-                              color: Colors.blue,
-                            )
+                            trailing: OutlineButton.icon(
+                              onPressed:  () => scanItem(items[index].id, index),
+                              icon: Icon(Icons.camera_alt),
+                              label: new Text("Scan Item"),
+//                              color: Colors.white,
+//                              textColor: Colors.white,
+                            ),
                         );
                       }
                   )
@@ -266,7 +273,7 @@ scan();
     context,
     MaterialPageRoute(builder: (context) => HomeScreen()),
     ),
-            child: new Text("Home"),
+            child: new Text("Return to Home"),
             color: Colors.blue,
             textColor: Colors.white,
           ),

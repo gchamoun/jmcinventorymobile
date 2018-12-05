@@ -9,7 +9,6 @@ import 'package:jmcinventory/Checkout.dart';
 import 'package:jmcinventory/Checkin.dart';
 
 import 'package:jmcinventory/User.dart';
-import 'package:jmcinventory/Global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -150,7 +149,7 @@ class _UserPageState extends State<UserPage> {
   void _getNames() async {
     final response = await dio.get('https://swapi.co/api/people');
 
-    final response2 = await dio.get('http://192.168.1.213/mobile/getallusers');
+    final response2 = await dio.get(baseUrl + 'mobile/getallusers');
  Map userMap = json.decode(response2.data);
 
 

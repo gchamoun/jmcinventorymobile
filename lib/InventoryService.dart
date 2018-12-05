@@ -20,9 +20,9 @@ class InventoryService {
   }
   Future<bool> checkoutItem(int itemId, bool firstItem) async{
     final prefs = await SharedPreferences.getInstance();
-    final currentUserId = prefs.getString('userId') ?? 0;
+    final currentUserId = prefs.getInt('userId') ?? 0;
     final currentEmployeeId = prefs.getInt('employeeId') ?? 0;
-    print('checking out item: ' + itemId.toString() + 'from codeigniter');
+    print('checking out item: ' + itemId.toString() + ' from codeigniter');
     Response response = await http.post(baseUrl + 'mobile/checkOutItems/'
         + currentUserId.toString() + '/'
         +  currentEmployeeId.toString() + '/'
@@ -30,7 +30,7 @@ class InventoryService {
         + (firstItem? '0':'1')
         );
     print(response.data);
-    return (response.data == 1)? true: false;
+    return (response.data != null)? true: false;
   }
   Future<bool> checkoutItems (List<Item> items) async{
     bool first = true;
@@ -49,27 +49,28 @@ class InventoryService {
   Future<List<Item>> getUsersItems (int userId) async{
 
      List<Item> itemList = new List();
+     print(baseUrl + 'mobile/getUsersCheckin/' + userId.toString());
     final response = await http.post(baseUrl + 'mobile/getUsersCheckin/' + userId.toString());
+    if (response.data != ''){
+      Map itemMap = json.decode(response.data);
 
-Map itemMap = json.decode(response.data);
 
+      List tempList = new List();
+      for (int i = 0; i < itemMap["results"].length; i++) {
+        print(itemMap["results"][i]);
+        tempList.add(itemMap["results"][i]);
+      }
 
-    List tempList = new List();
-    for (int i = 0; i < itemMap["results"].length; i++) {
-      print(itemMap["results"][i]);
-      tempList.add(itemMap["results"][i]);
+      for(var jsonString in tempList){
+        int id = (int.tryParse(jsonString["item_id"]));
+
+        Item item = await getItem(id);
+
+        itemList.add(item);
+      }
+      print(itemList);
     }
-
-     for(var jsonString in tempList){
-      int id = (int.tryParse(jsonString["item_id"]));
-
-      Item item = await getItem(id);
-
-      itemList.add(item);
-  }
-  print(itemList);
-
-  return itemList;
+     return itemList;
     }
 
 
