@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:jmcinventory/Item.dart';
 import 'package:jmcinventory/global.dart';
  import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -10,10 +11,7 @@ class InventoryService {
   var http = new Dio();
 
   Future<Item> getItem(int itemId) async{
-
     print('Requesting item:' + itemId.toString() + ': from codeigniter');
-
-    //Response response = await http.post(baseUrl.toString() + 'mobile/getItem/' + itemId.toString());
     Response response = await http.post(baseUrl+ 'mobile/getItem/' +itemId.toString());
     print(response.data);
     print('converting JSON to Item object');
@@ -21,8 +19,16 @@ class InventoryService {
     return item;
   }
   Future<bool> checkoutItem(int itemId, bool firstItem) async{
+    final prefs = await SharedPreferences.getInstance();
+    final currentUserId = prefs.getString('userId') ?? 0;
+    final currentEmployeeId = prefs.getInt('employeeId') ?? 0;
     print('checking out item: ' + itemId.toString() + 'from codeigniter');
-    Response response = await http.post(baseUrl + 'inventory/mobile_checkout/' + itemId.toString());
+    Response response = await http.post(baseUrl + 'mobile/checkOutItems/'
+        + currentUserId.toString() + '/'
+        +  currentEmployeeId.toString() + '/'
+        + itemId.toString() + '/'
+        + (firstItem? '0':'1')
+        );
     print(response.data);
     return (response.data == 1)? true: false;
   }

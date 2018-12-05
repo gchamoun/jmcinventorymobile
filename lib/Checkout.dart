@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:jmcinventory/Item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jmcinventory/MessagePage.dart';
 
 
 class Checkout extends StatefulWidget {
@@ -18,7 +19,8 @@ class Checkout extends StatefulWidget {
     InventoryService inventoryService = new InventoryService();
   String qrString = "";
   List<Item> items = [];
-
+  bool checkoutSuccess = false;
+  bool checkoutStarted = false;
 
 
 
@@ -36,8 +38,24 @@ class Checkout extends StatefulWidget {
      print("Removing from list at index: " + index.toString());
     });
   }
-  onCheckout() {
-    inventoryService.checkoutItems(items);
+  Future onCheckout() async {
+      bool first = true;
+      for (Item item in items){
+        print('Checking out Items. Current: ' + item.description.toString() + ' first: ' + first.toString());
+        Future<bool> result = inventoryService.checkoutItem(item.id, first);
+        if(first){
+          first = false;
+        }
+      }
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('message', 'Checkout successful! Return to home');
+      prefs.setInt('returnVa', 1);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MessagePage()),
+      );
+      return true;
   }
   // This is the method to activate the camera and scan for qr code. If found, set the global variable qrString to the string result of the scan.
   // I also added the successful scan result to a list that is rendered above
@@ -132,16 +150,15 @@ class Checkout extends StatefulWidget {
             );
           }
       )
-  )
+  ),
   ],
   ),
-  ),
-    bottomNavigationBar: new BottomAppBar(
-      child: RaisedButton(onPressed: onCheckout,
-        child: new Text("CHECKOUT"),
-        color: Colors.blue,
-        textColor: Colors.white,
-      ),
+  ), bottomNavigationBar: new BottomAppBar(
+    child: RaisedButton(onPressed: onCheckout,
+    child: new Text("CHECKOUT"),
+    color: Colors.blue,
+    textColor: Colors.white,
+    ),
       color: Colors.blue,
     ),
   ),

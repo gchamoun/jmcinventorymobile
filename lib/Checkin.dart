@@ -52,7 +52,7 @@ class _MyAppState extends State<Checkin> {
     });
   }
   onCheckout() {
-    inventoryService.checkoutItems(items);
+    //inventoryService.checkoutItems(items);
   }
   // This is the method to activate the camera and scan for qr code. If found, set the global variable qrString to the string result of the scan.
   // I also added the successful scan result to a list that is rendered above
