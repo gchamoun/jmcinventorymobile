@@ -22,6 +22,7 @@ class _MyAppState extends State<Checkin> {
   String qrString = "";
   List<Item> items = [];
   List<int> indexOfCheckouts = [];
+  String message ='';
 
 
   @override
@@ -39,20 +40,25 @@ class _MyAppState extends State<Checkin> {
     final userIdGet = prefs.getInt('userId') ?? 0;
 
     items = await inventoryService.getUsersItems(userIdGet);
+    print(items.toString());
 
     setState(() {
-      items = items;
+      if(items.length == 0){
+        message = 'User has no items checked out';
+      }
+      else{
+        items = items;
+      }
     });
 
   }
   void onRemoveItem(int index) {
-
     items.removeAt(index);
     setState(() {
     });
   }
   onCheckout() {
-    inventoryService.checkoutItems(items);
+    //inventoryService.checkoutItems(items);
   }
   // This is the method to activate the camera and scan for qr code. If found, set the global variable qrString to the string result of the scan.
   // I also added the successful scan result to a list that is rendered above
@@ -60,7 +66,7 @@ class _MyAppState extends State<Checkin> {
 
     try {
       String qrString = await BarcodeScanner.scan();
-//      addInventoryItem(int.tryParse(qrString));
+      this.qrString = qrString;
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         setState(() {
@@ -102,98 +108,77 @@ class _MyAppState extends State<Checkin> {
   }
 
   Future scanItem(itemId,index) async {
+    final prefs = await SharedPreferences.getInstance();
+    final workerIdGet = prefs.getInt('employeeId') ?? 0;
+
+
     print("array before:");
 
     indexOfCheckouts.add(index);
     print("array after:");
     print(indexOfCheckouts);
-//  scan();
-scan();
-
-  if (qrString == itemId.toString()){
-    final prefs = await SharedPreferences.getInstance();
-
-  final workerIdGet = prefs.getInt('employeeId') ?? 0;
-
-    inventoryService.checkinItem(workerIdGet,itemId);
-    _correctItem(items[index].description);
-
-  }
-  else {
-    _wrongItem();
-  }
+    final result =  await scan();
+    print(qrString);
+    print (itemId.toString());
+    if (int.tryParse(qrString) == itemId){
+      inventoryService.checkinItem(workerIdGet,itemId);
+      _correctItem(items[index].description);
+    }
+    else {
+      _wrongItem();
+    }
   }
 
 
-  Future<void> _wrongItem() async {
-    return showDialog<void>(
+
+
+  Future _wrongItem(){
+    showDialog(
       context: context,
-      barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
+        // return object of type Dialog
         return AlertDialog(
-          title: Text('This is the wrong item'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Please try again.'),
-              ],
-            ),
-          ),
+          title: new Text("This is the wrong item"),
+          content: Text('Please try again.'),
           actions: <Widget>[
-            FlatButton(
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
               child: Text('Back'),
               onPressed: () {
                 Navigator.of(context).pop();
-              },
+             },
             ),
-            FlatButton(
-              child: Text('add message'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-
           ],
         );
-
-
       },
     );
   }
-  Future<void> _correctItem(String itemName) async {
-    return showDialog<void>(
+
+  Future _correctItem(String itemName){
+    showDialog(
       context: context,
-      barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
+        // return object of type Dialog
         return AlertDialog(
-          title: Text('Successfully Checked out:'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(itemName),
-              ],
-            ),
-          ),
+          title: new Text("Successfully Checked in:"),
+          content: Text(itemName),
           actions: <Widget>[
-            FlatButton(
-              child: Text('Add Message'),
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: Text('Add Item Note'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            FlatButton(
+            new FlatButton(
               child: Text('Continue'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Checkin()),
-                );              },
+              onPressed: () =>     Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Checkin()),
+              ),
             ),
-
           ],
         );
-
-
       },
     );
   }
@@ -230,7 +215,7 @@ scan();
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ListTile(
-                      title: Text(userEmail),
+                      title: Text('Guest: ' + userEmail),
 //            trailing: FlatButton(
 ////              child: const Text('Edit User'),
 ////              textColor: Colors.white,
@@ -240,8 +225,8 @@ scan();
                   ],
                 ),
               ),
-              new Text(qrString),
               //Here is the builder for my list of scanned qrcodes
+              new Text(message),
               new Expanded(
                   child: new ListView.builder
                     (
@@ -249,11 +234,13 @@ scan();
                       itemBuilder: (BuildContext ctxt, int index) {
                         return ListTile(
                             title: new Text(items[index].description),
-                            trailing: IconButton(
-                              icon: getIcon(index),
-                              onPressed: () => scanItem(items[index].id, index),
-                              color: Colors.blue,
-                            )
+                            trailing: OutlineButton.icon(
+                              onPressed:  () => scanItem(items[index].id, index),
+                              icon: Icon(Icons.camera_alt),
+                              label: new Text("Scan Item"),
+//                              color: Colors.white,
+//                              textColor: Colors.white,
+                            ),
                         );
                       }
                   )
@@ -266,7 +253,7 @@ scan();
     context,
     MaterialPageRoute(builder: (context) => HomeScreen()),
     ),
-            child: new Text("Home"),
+            child: new Text("Return to Home"),
             color: Colors.blue,
             textColor: Colors.white,
           ),
