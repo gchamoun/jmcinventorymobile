@@ -99,9 +99,10 @@ class _UserPageState extends State<UserPage> {
     );
   }
   Future getUserId(index) async {
+    print(index);
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('userEmail', filteredNames[index]['email']);
-    prefs.setInt('userId', int.tryParse(filteredNames[index]['id']));
+    prefs.setInt('userId', filteredNames[index]['id']);
     final userIdGet = prefs.getInt('userId') ?? 0;
     print("user ID GET");
     print(userIdGet);
