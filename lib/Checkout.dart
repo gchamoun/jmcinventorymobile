@@ -113,6 +113,7 @@ class Checkout extends StatefulWidget {
     Future addInventoryItem(int itemId) async {
       Item item = await inventoryService.getItem(itemId);
       items.add(item);
+      itemDetailModal(items.length-1);
       setState(() => {});
     }
 

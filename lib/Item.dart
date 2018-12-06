@@ -1,3 +1,5 @@
+import 'package:jmcinventory/Accessory.dart';
+
 class Item{
   int id;
   int categoryId;
@@ -7,6 +9,8 @@ class Item{
   String serial;
   String description;
   var accessories;
+  List<String> accessoriesList;
+  List<bool> accessoriesIncluded;
 
 
   Item({
@@ -17,9 +21,20 @@ class Item{
     this.dateDeleted,
     this.serial,
     this.description,
-    this.accessories
+    this.accessories,
+    this.accessoriesList,
+    this.accessoriesIncluded,
   });
   factory Item.fromJson(Map<String, dynamic> parsedJson){
+    List<String> tempList = new List();
+    List<bool> tempIncluded = new List();
+    var temp = parsedJson['accessories'];
+    for(var item in temp){
+      tempList.add(item + '');
+      tempIncluded.add(false);
+    }
+
+
     return Item(
         id: int.tryParse(parsedJson['id']),
         categoryId : int.tryParse(parsedJson['category_id']),
@@ -28,7 +43,8 @@ class Item{
         dateDeleted: parsedJson['datedeleted'],
         description: parsedJson['description'],
         serial: parsedJson['serial'],
-        accessories: parsedJson['accessories'],
+        accessoriesList: tempList,
+        accessoriesIncluded: tempIncluded,
     );
   }
 }
