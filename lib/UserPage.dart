@@ -100,8 +100,11 @@ class _UserPageState extends State<UserPage> {
   Future getUserId(index) async {
     print(index);
     final prefs = await SharedPreferences.getInstance();
+    print(filteredNames[index]['email']);
+    print(filteredNames[index]['id']);
+
     prefs.setString('userEmail', filteredNames[index]['email']);
-    prefs.setInt('userId', filteredNames[index]['id']);
+    prefs.setInt('userId', int.tryParse(filteredNames[index]['id']));
     final userIdGet = prefs.getInt('userId') ?? 0;
     print("user ID GET");
     print(userIdGet);
@@ -152,11 +155,12 @@ class _UserPageState extends State<UserPage> {
 
     final response2 = await dio.get(baseUrl + 'mobile/getallusers');
  Map userMap = json.decode(response2.data);
-
+print(userMap);
 
     List tempList = new List();
     for (int i = 0; i < userMap['results'].length; i++) {
       tempList.add(userMap['results'][i]);
+      print(userMap['results'][i]);
     }
 
     setState(() {
