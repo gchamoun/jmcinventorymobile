@@ -32,7 +32,7 @@ class _UserPageState extends State<UserPage> {
   Widget _appBarTitle = new Text( 'Users' );
 
   _UserPageState() {
-    _filter.addListener(() {
+    _filter.addListener(() {tter 
       if (_filter.text.isEmpty) {
         setState(() {
           _searchText = "";
