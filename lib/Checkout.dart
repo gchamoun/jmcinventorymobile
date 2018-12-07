@@ -82,7 +82,7 @@ class Checkout extends StatefulWidget {
         prefs.setString('message', 'Checkout successful! Return to home');
         prefs.setInt('returnVa', 1);
 
-        successScreen('These Items');
+        successScreen();
         return true;
       }
     }
@@ -151,7 +151,7 @@ class Checkout extends StatefulWidget {
               children: <Widget>[
                 Card(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+//                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       ListTile(
                         title: Text('Guest: ' + userEmail),
@@ -198,44 +198,22 @@ class Checkout extends StatefulWidget {
       );
     }
 
-    Future<void> successScreen(String itemName) async {
-      return showDialog<void>(
+    Future<void> successScreen() async {
+      showDialog(
         context: context,
-        barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
+          // return object of type Dialog
           return AlertDialog(
-            title: Text('Successfully Checked out:'),
-            content: new Center(
-              child: new Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  //Here is the builder for my list of scanned qrcodes
-                  new Expanded(
-                      child: new ListView.builder
-                        (
-                          itemCount: items.length,
-                          itemBuilder: (BuildContext ctxt, int index) {
-                            return ListTile(
-                                leading: const Icon(Icons.camera),
-                                title: new Text(items[index].description),
-                            );
-                          }
-                      )
-                  ),
-                ],
-              ),
-            ),
+            title: new Text("Successfully Checked in:"),
             actions: <Widget>[
-              FlatButton(
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
                 child: Text('Return Home'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                },
+                onPressed: () =>     Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                ),
               ),
-
             ],
           );
         },
