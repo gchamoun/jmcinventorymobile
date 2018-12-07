@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:jmcinventory/Item.dart';
 import 'package:jmcinventory/HomeScreen.dart';
+import 'package:jmcinventory/ItemDetailsModalContents.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +23,9 @@ class _MyAppState extends State<Checkin> {
   List<Item> items = [];
   List<int> indexOfCheckouts = [];
   String message = '';
+  String titleMessage = 'Item Details';
+  Color titleColor = Colors.black;
+  bool accessoriesOverride = false;
 
   @override
   initState() {
@@ -114,6 +118,7 @@ class _MyAppState extends State<Checkin> {
     print(qrString);
     print(itemId.toString());
     if (int.tryParse(qrString) == itemId) {
+      await itemDetailModal(index);
       inventoryService.checkinItem(workerIdGet, itemId);
       _correctItem(items[index].description);
     } else {
@@ -153,12 +158,6 @@ class _MyAppState extends State<Checkin> {
           content: Text(itemName),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: Text('Add Item Note'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
             new FlatButton(
               child: Text('Continue'),
               onPressed: () => Navigator.push(
@@ -205,11 +204,6 @@ class _MyAppState extends State<Checkin> {
                   children: <Widget>[
                     ListTile(
                       title: Text('Guest: ' + userEmail),
-//            trailing: FlatButton(
-////              child: const Text('Edit User'),
-////              textColor: Colors.white,
-////              onPressed: null,
-//            ),
                     ),
                   ],
                 ),
@@ -248,5 +242,60 @@ class _MyAppState extends State<Checkin> {
         ),
       ),
     );
+  }
+  itemDetailModal(int index) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(titleMessage, style: TextStyle(color: titleColor)),
+          content: new Center(
+            child: new ItemDetailsModalContents(item: items[index]),
+          ),
+          actions: <Widget>[
+            new FlatButton(
+              child: Text('Add Item Note'),
+              onPressed: () {
+                accessoriesOverride = true;
+              },
+            ),
+            FlatButton(
+              child: Text('Continue'),
+              onPressed: () {
+                if(verifyItemAccessories(items[index], index) || accessoriesOverride){
+                  accessoriesOverride = false;
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                }else{
+                  setState(() {
+
+                  });
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  verifyItemAccessories(Item item, index) {
+    for (bool included in item.accessoriesIncluded) {
+      if (!included) {
+        titleMessage =
+        'Warning: All accessories not included';
+        titleColor = Colors.red;
+        print('...Push accessories warning...');
+        return false;
+      }
+    }
+    setState(() {
+      titleMessage = 'Item Details';
+      titleColor = Colors.black;
+    });
+    print('...No accessories warning...');
+    return true;
   }
 }

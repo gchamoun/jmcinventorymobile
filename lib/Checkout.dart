@@ -23,6 +23,9 @@ class _MyAppState extends State<Checkout> {
   bool checkoutStarted = false;
   bool userWaiverNeed = true;
   String warningMessage = '';
+  String titleMessage = 'Item Details';
+  Color titleColor = Colors.black;
+  bool accessoriesOverride = false;
 
   @override
   initState() {
@@ -91,7 +94,7 @@ class _MyAppState extends State<Checkout> {
         successScreen();
         return true;
       }
-    }else{
+    } else {
       return false;
     }
   }
@@ -168,7 +171,9 @@ class _MyAppState extends State<Checkout> {
                 ),
               ),
               new Text(qrString),
-              new Text(warningMessage, textAlign: TextAlign.center,style: TextStyle(color: Colors.red)),
+              new Text(warningMessage,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.red)),
               //Here is the builder for my list of scanned qrcodes
               new Expanded(
                   child: new ListView.builder(
@@ -229,19 +234,31 @@ class _MyAppState extends State<Checkout> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Item Details'),
+          title: Text(titleMessage, style: TextStyle(color: titleColor)),
           content: new Center(
             child: new ItemDetailsModalContents(item: items[index]),
           ),
           actions: <Widget>[
-            FlatButton(
-              child: Text('Back'),
+            new FlatButton(
+              child: Text('Add Item Note'),
               onPressed: () {
-                allItemsVerified();
-                Navigator.pop(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
+                accessoriesOverride = true;
+              },
+            ),
+            FlatButton(
+              child: Text('Continue'),
+              onPressed: () {
+                if(verifyItemAccessories(items[index], index) || accessoriesOverride){
+                  accessoriesOverride = false;
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                }else{
+                  setState(() {
+
+                  });
+                }
               },
             ),
           ],
@@ -250,13 +267,32 @@ class _MyAppState extends State<Checkout> {
     );
   }
 
+  verifyItemAccessories(Item item, index) {
+    for (bool included in item.accessoriesIncluded) {
+      if (!included) {
+        titleMessage =
+        'Warning: All accessories not included';
+        titleColor = Colors.red;
+        print('...Push accessories warning...');
+        return false;
+      }
+    }
+    setState(() {
+      titleMessage = 'Item Details';
+      titleColor = Colors.black;
+    });
+    print('...No accessories warning...');
+    return true;
+  }
+
   bool allItemsVerified() {
     print('...Verifying accessories...');
     for (Item item in items) {
       for (bool included in item.accessoriesIncluded) {
         if (!included) {
           setState(() {
-            warningMessage = 'Warning: Attempting to checkout items without verifying all accesories are included is prohibited';
+            warningMessage =
+                'Warning: Attempting to checkout items without verifying all accesories are included is prohibited';
           });
           print('...Push accessories warning...');
           return false;
