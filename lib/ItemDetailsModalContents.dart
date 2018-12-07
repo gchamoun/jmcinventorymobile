@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jmcinventory/Item.dart';
 
-class AccessoriesCheckBoxContent extends StatefulWidget {
-  AccessoriesCheckBoxContent({
+class ItemDetailsModalContents extends StatefulWidget {
+  ItemDetailsModalContents({
     Key key,
     this.item,
   }) : super(key: key);
@@ -10,12 +10,11 @@ class AccessoriesCheckBoxContent extends StatefulWidget {
   final Item item;
 
   @override
-  _AccessoriesCheckBoxContentState createState() =>
-      new _AccessoriesCheckBoxContentState();
+  _ItemDetailsModalContentsState createState() =>
+      new _ItemDetailsModalContentsState();
 }
 
-class _AccessoriesCheckBoxContentState
-    extends State<AccessoriesCheckBoxContent> {
+class _ItemDetailsModalContentsState extends State<ItemDetailsModalContents> {
   @override
   void initState() {
     super.initState();
@@ -26,15 +25,19 @@ class _AccessoriesCheckBoxContentState
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        new Text(
-          'Name: ' + widget.item.description,
-          textAlign: TextAlign.left,
+        Text("Name:",
+            style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+        Text(widget.item.description,
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        Padding(padding: EdgeInsets.only(top: 10)),
+        Text("Serial:",
+            style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+        Text(widget.item.serial, style: TextStyle(fontWeight: FontWeight.bold)),
+        Padding(padding: EdgeInsets.only(top: 10)),
+        Text('Included Accessories:',
+            style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+
         ),
-        new Text(
-          'Serial: ' + widget.item.serial,
-          textAlign: TextAlign.left,
-        ),
-        new Text('Which accessories are included with this item?'),
         //Here is the builder for my list of scanned qrcodes
         new Expanded(
             child: new ListView.builder(

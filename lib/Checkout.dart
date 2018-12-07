@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:jmcinventory/Item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jmcinventory/HomeScreen.dart';
-import 'package:jmcinventory/AccessoriesCheckBoxContent.dart';
+import 'package:jmcinventory/ItemDetailsModalContents.dart';
 
 class Checkout extends StatefulWidget {
   @override
@@ -22,9 +22,11 @@ class _MyAppState extends State<Checkout> {
   bool checkoutSuccess = false;
   bool checkoutStarted = false;
   bool userWaiverNeed = true;
+  String warningMessage = '';
 
   @override
   initState() {
+    print('in init method');
     super.initState();
     this.getUserId();
   }
@@ -34,6 +36,7 @@ class _MyAppState extends State<Checkout> {
     setState(() {
       print("Removing from list at index: " + index.toString());
     });
+    allItemsVerified();
   }
 
   onUserWaiverNeeded() {
@@ -62,30 +65,34 @@ class _MyAppState extends State<Checkout> {
   }
 
   Future onCheckout() async {
-    bool waiverAccepted = false;
-    if (userWaiverNeed) {
-      waiverAccepted = await onUserWaiverNeeded();
-    } else {
-      bool first = true;
-      for (Item item in items) {
-        print('Checking out Items. Current: ' +
-            item.description.toString() +
-            ' first: ' +
-            first.toString());
-        bool result = await inventoryService.checkoutItem(item.id, first);
-        if (result) {
-          print('after item ' + item.id.toString() + ' checkout');
+    if (allItemsVerified()) {
+      bool waiverAccepted = false;
+      if (userWaiverNeed) {
+        waiverAccepted = await onUserWaiverNeeded();
+      } else {
+        bool first = true;
+        for (Item item in items) {
+          print('Checking out Items. Current: ' +
+              item.description.toString() +
+              ' first: ' +
+              first.toString());
+          bool result = await inventoryService.checkoutItem(item.id, first);
+          if (result) {
+            print('after item ' + item.id.toString() + ' checkout');
+          }
+          if (first) {
+            first = false;
+          }
         }
-        if (first) {
-          first = false;
-        }
-      }
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString('message', 'Checkout successful! Return to home');
-      prefs.setInt('returnVa', 1);
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('message', 'Checkout successful! Return to home');
+        prefs.setInt('returnVa', 1);
 
-      successScreen();
-      return true;
+        successScreen();
+        return true;
+      }
+    }else{
+      return false;
     }
   }
 
@@ -95,6 +102,7 @@ class _MyAppState extends State<Checkout> {
     try {
       String qrString = await BarcodeScanner.scan();
       addInventoryItem(int.tryParse(qrString));
+      this.qrString = '';
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         setState(() {
@@ -160,6 +168,7 @@ class _MyAppState extends State<Checkout> {
                 ),
               ),
               new Text(qrString),
+              new Text(warningMessage, textAlign: TextAlign.center,style: TextStyle(color: Colors.red)),
               //Here is the builder for my list of scanned qrcodes
               new Expanded(
                   child: new ListView.builder(
@@ -198,7 +207,7 @@ class _MyAppState extends State<Checkout> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Successfully Checked in:"),
+          title: new Text("Successfully Checked In"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
@@ -222,12 +231,13 @@ class _MyAppState extends State<Checkout> {
         return AlertDialog(
           title: Text('Item Details'),
           content: new Center(
-            child: new AccessoriesCheckBoxContent(item: items[index]),
+            child: new ItemDetailsModalContents(item: items[index]),
           ),
           actions: <Widget>[
             FlatButton(
               child: Text('Back'),
               onPressed: () {
+                allItemsVerified();
                 Navigator.pop(
                   context,
                   MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -238,5 +248,25 @@ class _MyAppState extends State<Checkout> {
         );
       },
     );
+  }
+
+  bool allItemsVerified() {
+    print('...Verifying accessories...');
+    for (Item item in items) {
+      for (bool included in item.accessoriesIncluded) {
+        if (!included) {
+          setState(() {
+            warningMessage = 'Warning: Attempting to checkout items without verifying all accesories are included is prohibited';
+          });
+          print('...Push accessories warning...');
+          return false;
+        }
+      }
+    }
+    setState(() {
+      warningMessage = '';
+    });
+    print('...No accessories warning...');
+    return true;
   }
 }
