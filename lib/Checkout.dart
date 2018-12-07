@@ -7,7 +7,7 @@ import 'package:jmcinventory/Item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jmcinventory/MessagePage.dart';
 import 'package:jmcinventory/HomeScreen.dart';
-
+import 'package:jmcinventory/AccessoriesCheckBoxContent.dart';
 
 class Checkout extends StatefulWidget {
   @override
@@ -241,7 +241,7 @@ class Checkout extends StatefulWidget {
         },
       );
     }
-    Future<void> itemDetailModal(int index) async {
+    itemDetailModal(int index) async {
       return showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
@@ -249,17 +249,7 @@ class Checkout extends StatefulWidget {
           return AlertDialog(
             title: Text('Item Details'),
             content: new Center(
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  new Text('Name: ' + items[index].description, textAlign: TextAlign.left,),
-                  new Text('Serial: ' + items[index].serial, textAlign: TextAlign.left,),
-                  new Text(items[index].accessories.toString(), textAlign: TextAlign.left,),
-                  //Here is the builder for my list of scanned qrcodes
-
-                ],
-              ),
+              child: new AccessoriesCheckBoxContent(item: items[index]),
             ),
             actions: <Widget>[
               FlatButton(

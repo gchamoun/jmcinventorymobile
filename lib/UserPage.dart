@@ -101,7 +101,7 @@ class _UserPageState extends State<UserPage> {
     print(index);
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('userEmail', filteredNames[index]['email']);
-    prefs.setInt('userId', filteredNames[index]['id']);
+    prefs.setInt('userId', int.tryParse(filteredNames[index]['id']));
     final userIdGet = prefs.getInt('userId') ?? 0;
     print("user ID GET");
     print(userIdGet);
