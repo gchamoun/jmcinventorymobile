@@ -8,7 +8,6 @@ import 'package:jmcinventory/HomeScreen.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class Checkin extends StatefulWidget {
   @override
   _MyAppState createState() => new _MyAppState();
@@ -22,17 +21,16 @@ class _MyAppState extends State<Checkin> {
   String qrString = "";
   List<Item> items = [];
   List<int> indexOfCheckouts = [];
-  String message ='';
-
+  String message = '';
 
   @override
   initState() {
     super.initState();
     this.getUserId();
     this.getItems();
-
   }
-  void getItems () async{
+
+  void getItems() async {
     print("User ID NEW");
     print(userId);
     final prefs = await SharedPreferences.getInstance();
@@ -43,27 +41,26 @@ class _MyAppState extends State<Checkin> {
     print(items.toString());
 
     setState(() {
-      if(items.length == 0){
+      if (items.length == 0) {
         message = 'User has no items checked out';
-      }
-      else{
+      } else {
         items = items;
       }
     });
-
   }
+
   void onRemoveItem(int index) {
     items.removeAt(index);
-    setState(() {
-    });
+    setState(() {});
   }
+
   onCheckout() {
     //inventoryService.checkoutItems(items);
   }
+
   // This is the method to activate the camera and scan for qr code. If found, set the global variable qrString to the string result of the scan.
   // I also added the successful scan result to a list that is rendered above
   Future scan() async {
-
     try {
       String qrString = await BarcodeScanner.scan();
       this.qrString = qrString;
@@ -75,8 +72,9 @@ class _MyAppState extends State<Checkin> {
       } else {
         setState(() => this.qrString = 'Unknown error: $e');
       }
-    } on FormatException{
-      setState(() => this.qrString = 'null (User returned using the "back"-button before scanning anything. Result)');
+    } on FormatException {
+      setState(() => this.qrString =
+          'null (User returned using the "back"-button before scanning anything. Result)');
     } catch (e) {
       setState(() => this.qrString = 'Unknown error: $e');
     }
@@ -85,54 +83,45 @@ class _MyAppState extends State<Checkin> {
   Future getUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final currentUserEmail = prefs.getString('userEmail') ?? 0;
-    final currentEmployee = prefs.getInt('employeeId') ?? 0;
     final userIdGet = prefs.getInt('userId') ?? 0;
     setState(() {
       userEmail = currentUserEmail;
       userId = userIdGet;
-
     });
     print("Userid:");
     print(userId);
-
   }
 
   Future getUserItems(userId) async {
     final prefs = await SharedPreferences.getInstance();
     final currentUserEmail = prefs.getString('userEmail') ?? 0;
-    final currentEmployee = prefs.getInt('employeeId') ?? 0;
 
     setState(() {
       userEmail = currentUserEmail;
     });
   }
 
-  Future scanItem(itemId,index) async {
+  Future scanItem(itemId, index) async {
     final prefs = await SharedPreferences.getInstance();
     final workerIdGet = prefs.getInt('employeeId') ?? 0;
-
 
     print("array before:");
 
     indexOfCheckouts.add(index);
     print("array after:");
     print(indexOfCheckouts);
-    final result =  await scan();
+    final result = await scan();
     print(qrString);
-    print (itemId.toString());
-    if (int.tryParse(qrString) == itemId){
-      inventoryService.checkinItem(workerIdGet,itemId);
+    print(itemId.toString());
+    if (int.tryParse(qrString) == itemId) {
+      inventoryService.checkinItem(workerIdGet, itemId);
       _correctItem(items[index].description);
-    }
-    else {
+    } else {
       _wrongItem();
     }
   }
 
-
-
-
-  Future _wrongItem(){
+  _wrongItem() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -146,7 +135,7 @@ class _MyAppState extends State<Checkin> {
               child: Text('Back'),
               onPressed: () {
                 Navigator.of(context).pop();
-             },
+              },
             ),
           ],
         );
@@ -154,7 +143,7 @@ class _MyAppState extends State<Checkin> {
     );
   }
 
-  Future _correctItem(String itemName){
+  _correctItem(String itemName) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -172,10 +161,10 @@ class _MyAppState extends State<Checkin> {
             ),
             new FlatButton(
               child: Text('Continue'),
-              onPressed: () =>     Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Checkin()),
-              ),
+              onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Checkin()),
+                  ),
             ),
           ],
         );
@@ -183,7 +172,7 @@ class _MyAppState extends State<Checkin> {
     );
   }
 
-  Icon getIcon(int index){
+  Icon getIcon(int index) {
 //    for (int i = 0; i < indexOfCheckouts.length; i++) {
 //      print("This is index checkout ");
 //      print(indexOfCheckouts[i]);
@@ -202,7 +191,7 @@ class _MyAppState extends State<Checkin> {
     return new MaterialApp(
       home: new Scaffold(
         appBar: AppBar(
-          title:  Text("Checkin"),
+          title: Text("Checkin"),
           actions: <Widget>[
             // action button
           ],
@@ -228,31 +217,29 @@ class _MyAppState extends State<Checkin> {
               //Here is the builder for my list of scanned qrcodes
               new Text(message),
               new Expanded(
-                  child: new ListView.builder
-                    (
+                  child: new ListView.builder(
                       itemCount: items.length,
                       itemBuilder: (BuildContext ctxt, int index) {
                         return ListTile(
-                            title: new Text(items[index].description),
-                            trailing: OutlineButton.icon(
-                              onPressed:  () => scanItem(items[index].id, index),
-                              icon: Icon(Icons.camera_alt),
-                              label: new Text("Scan Item"),
+                          title: new Text(items[index].description),
+                          trailing: OutlineButton.icon(
+                            onPressed: () => scanItem(items[index].id, index),
+                            icon: Icon(Icons.camera_alt),
+                            label: new Text("Scan Item"),
 //                              color: Colors.white,
 //                              textColor: Colors.white,
-                            ),
+                          ),
                         );
-                      }
-                  )
-              )
+                      }))
             ],
           ),
         ),
         bottomNavigationBar: new BottomAppBar(
-          child: RaisedButton(onPressed: () =>     Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => HomeScreen()),
-    ),
+          child: RaisedButton(
+            onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                ),
             child: new Text("Return to Home"),
             color: Colors.blue,
             textColor: Colors.white,

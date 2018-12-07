@@ -1,18 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:dio/dio.dart';
-import 'package:jmcinventory/global.dart';
-
 import 'dart:convert';
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:jmcinventory/global.dart';
 import 'package:jmcinventory/Checkout.dart';
 import 'package:jmcinventory/Checkin.dart';
-
-import 'package:jmcinventory/User.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
-
 
 class UserPage extends StatefulWidget {
   // ExamplePage({ Key key }) : super(key: key);
@@ -29,7 +22,7 @@ class _UserPageState extends State<UserPage> {
   List names = new List();
   List filteredNames = new List();
   Icon _searchIcon = new Icon(Icons.search);
-  Widget _appBarTitle = new Text( 'Users' );
+  Widget _appBarTitle = new Text('Users');
 
   _UserPageState() {
     _filter.addListener(() {
@@ -69,7 +62,6 @@ class _UserPageState extends State<UserPage> {
       leading: new IconButton(
         icon: _searchIcon,
         onPressed: _searchPressed,
-
       ),
     );
   }
@@ -78,7 +70,9 @@ class _UserPageState extends State<UserPage> {
     if (!(_searchText.isEmpty)) {
       List tempList = new List();
       for (int i = 0; i < filteredNames.length; i++) {
-        if (filteredNames[i]['email'].toLowerCase().contains(_searchText.toLowerCase())) {
+        if (filteredNames[i]['email']
+            .toLowerCase()
+            .contains(_searchText.toLowerCase())) {
           tempList.add(filteredNames[i]);
         }
       }
@@ -91,12 +85,12 @@ class _UserPageState extends State<UserPage> {
           title: Text(filteredNames[index]['email']),
 //          onTap: () => print(filteredNames[index]['email']),
           //          onTap: () => print(filteredNames[index]['email']),
-          onTap: () =>              getUserId(index),
-
+          onTap: () => getUserId(index),
         );
       },
     );
   }
+
   Future getUserId(index) async {
     print(index);
     final prefs = await SharedPreferences.getInstance();
@@ -115,19 +109,16 @@ class _UserPageState extends State<UserPage> {
 // set value
 
     final checkout = prefs.getInt('Checkout') ?? 0;
-    if(checkout == 1) {
+    if (checkout == 1) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Checkout()),
       );
-    }
-    else{
-
+    } else {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Checkin()),
       );
-
     }
   }
 
@@ -138,24 +129,21 @@ class _UserPageState extends State<UserPage> {
         this._appBarTitle = new TextField(
           controller: _filter,
           decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.search),
-              hintText: 'Search...'
-          ),
+              prefixIcon: new Icon(Icons.search), hintText: 'Search...'),
         );
       } else {
         this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text( 'Users' );
+        this._appBarTitle = new Text('Users');
         filteredNames = names;
         _filter.clear();
       }
     });
   }
-  void _getNames() async {
-    final response = await dio.get('https://swapi.co/api/people');
 
-    final response2 = await dio.get(baseUrl + 'mobile/getallusers');
- Map userMap = json.decode(response2.data);
-print(userMap);
+  void _getNames() async {
+    final response = await dio.get(baseUrl + 'mobile/getallusers');
+    Map userMap = json.decode(response.data);
+    print(userMap);
 
     List tempList = new List();
     for (int i = 0; i < userMap['results'].length; i++) {
@@ -169,6 +157,4 @@ print(userMap);
       filteredNames = names;
     });
   }
-
-
 }

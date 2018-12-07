@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:dio/dio.dart';
 
 class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-    return new Scaffold(appBar: AppBar(
-      backgroundColor: Colors.indigo[900],
-      title: Text("Signup"),
-    ),
+    return new Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.indigo[900],
+        title: Text("Signup"),
+      ),
       resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.white,
       body: new Stack(fit: StackFit.expand, children: <Widget>[
@@ -19,21 +18,16 @@ class SignupScreen extends StatelessWidget {
           colorBlendMode: BlendMode.darken,
           color: Colors.black87,
         ),
-
         new Theme(
           data: new ThemeData(
               brightness: Brightness.dark,
               inputDecorationTheme: new InputDecorationTheme(
                 // hintStyle: new TextStyle(color: Colors.blue, fontSize: 20.0),
-                labelStyle:
-                new TextStyle(color: Colors.white, fontSize: 20.0),
+                labelStyle: new TextStyle(color: Colors.white, fontSize: 20.0),
               )),
           isMaterialAppTheme: true,
           child: new Column(
-
             children: <Widget>[
-
-
               new Container(
                 padding: const EdgeInsets.all(40.0),
                 child: new Form(
@@ -41,9 +35,6 @@ class SignupScreen extends StatelessWidget {
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-
-
-
                       new TextFormField(
                         decoration: new InputDecoration(
                             labelText: "Enter Email", fillColor: Colors.white),
@@ -51,55 +42,51 @@ class SignupScreen extends StatelessWidget {
                       ),
                       new TextFormField(
                         decoration: new InputDecoration(
-                            labelText: "Enter Password",fillColor: Colors.white
-                        ),
+                            labelText: "Enter Password",
+                            fillColor: Colors.white),
                         obscureText: true,
                         keyboardType: TextInputType.text,
                       ),
                       new TextFormField(
                         decoration: new InputDecoration(
-                            labelText: "Confirm Password",fillColor: Colors.white
-                        ),
+                            labelText: "Confirm Password",
+                            fillColor: Colors.white),
                         obscureText: true,
                         keyboardType: TextInputType.text,
                       ),
                       new Padding(
-                        padding: const EdgeInsets.only(top:40.0),
+                        padding: const EdgeInsets.only(top: 40.0),
                       ),
-
-                      new Container(     width: double.infinity,
-
-
+                      new Container(
+                        width: double.infinity,
                         child: new MaterialButton(
-
                             color: Colors.indigo[900],
                             splashColor: Colors.indigo[900],
-                            textColor: Colors.white,                          onPressed: () { Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignupScreen()),
-                        );
-                        },
-
+                            textColor: Colors.white,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignupScreen()),
+                              );
+                            },
                             child: Column(
-                              children:<Widget>[
+                              children: <Widget>[
                                 new Padding(
-                                  padding: const EdgeInsets.only(top:8.0),
+                                  padding: const EdgeInsets.only(top: 8.0),
                                 ),
-                                new Icon(FontAwesomeIcons.userPlus),new Padding(
-                                  padding: const EdgeInsets.only(top:8.0),
+                                new Icon(FontAwesomeIcons.userPlus),
+                                new Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
                                 ),
                                 Text("Signup"),
                                 new Padding(
-                                  padding: const EdgeInsets.only(top:8.0),
+                                  padding: const EdgeInsets.only(top: 8.0),
                                 ),
                               ],
-
-                            )
-
-                        ),
-                      )],
-
-
+                            )),
+                      )
+                    ],
                   ),
                 ),
               )
@@ -108,6 +95,5 @@ class SignupScreen extends StatelessWidget {
         ),
       ]),
     );
-
   }
 }

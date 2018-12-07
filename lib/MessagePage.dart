@@ -9,7 +9,6 @@ class MessagePage extends StatefulWidget {
 }
 
 class MessagePageState extends State<MessagePage> {
-  String _status = 'no-action';
   String message = '';
   String link = '';
   int returnValue = 0;
@@ -20,7 +19,7 @@ class MessagePageState extends State<MessagePage> {
     super.initState();
   }
 
-  Future setData()async{
+  Future setData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       message = prefs.getString('message') ?? 'ERROR: Message not defined';
@@ -30,30 +29,31 @@ class MessagePageState extends State<MessagePage> {
 
   @override
   Widget build(BuildContext context) => new Scaffold(
-    appBar: new AppBar(
-      title: new Text('Message'),
-    ),
-    body: new Container(
-
+      appBar: new AppBar(
+        title: new Text('Message'),
+      ),
+      body: new Container(
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              new Text(message, textAlign: TextAlign.center,),
+              new Text(
+                message,
+                textAlign: TextAlign.center,
+              ),
               new RaisedButton(
-                  child: new Text(
-                      'Return'
-                  ),
+                  child: new Text('Return'),
                   onPressed: () {
                     if (returnValue == 1) {
-                      Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
                     }
                   })
             ],
           ),
         ),
-        )
-      );
+      ));
 }

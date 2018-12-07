@@ -1,16 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
-import 'dart:io';
-import 'package:jmcinventory/User.dart';
-
-import 'package:cookie_jar/cookie_jar.dart';
 
 class DioPage extends StatelessWidget {
-
-  fetchData()async {
+  fetchData() async {
     var dio = new Dio();
     dio.options.baseUrl = "http://172.31.131.169:80/auth/mobile_login";
 
@@ -18,12 +10,14 @@ class DioPage extends StatelessWidget {
       "email": "admin@admin.com",
       "password": "1234",
       "isMobile": true,
-
     });
-    print("***********************************************************************************");
+    print(
+        "***********************************************************************************");
     //Response response = await dio.post("/token", data: formData);
-    Response response = await dio.post("http://172.31.131.169:80/auth/mobile_login", data: formData);
-    print("***********************************************************************************");
+    Response response = await dio
+        .post("http://172.31.131.169:80/auth/mobile_login", data: formData);
+    print(
+        "***********************************************************************************");
     print(response.data.toString());
 
 //    json
@@ -35,9 +29,10 @@ class DioPage extends StatelessWidget {
 //    }else{
 //      print("Not valid login");
 //    }
-    print("***********************************************************************************");
-
+    print(
+        "***********************************************************************************");
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -50,10 +45,11 @@ class DioPage extends StatelessWidget {
           title: Text('Fetch Data Example'),
         ),
         body: Center(
-            child: new IconButton(icon:new Icon(Icons.all_inclusive) , onPressed: (){
-              fetchData();
-            })
-        ),
+            child: new IconButton(
+                icon: new Icon(Icons.all_inclusive),
+                onPressed: () {
+                  fetchData();
+                })),
       ),
     );
   }

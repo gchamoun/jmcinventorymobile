@@ -1,32 +1,16 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:validate/validate.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
 import 'package:jmcinventory/User.dart';
-import 'package:jmcinventory/Checkout.dart';
 import 'package:jmcinventory/HomeScreen.dart';
 import 'package:jmcinventory/global.dart';
-import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 void main() => runApp(new MaterialApp(
-  title: 'Forms in Flutter',
-  home: new LoginPage(),
-));
-
-//class User {
-//  final String id;
-//
-//  User(this.id);
-//
-//  User.fromJson(Map<String, String> json)
-//      : id = json['id'];
-//  Map<String, String> toJson() =>
-//      {
-//        'id': id
-//      };
-//}
+      title: 'Forms in Flutter',
+      home: new LoginPage(),
+    ));
 
 class LoginPage extends StatefulWidget {
   @override
@@ -97,22 +81,21 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  fetchData()async {
+  fetchData() async {
     var dio = new Dio();
 
-    FormData formData = new FormData.from({
-      "email": '${_data.email}',
-      "password": '${_data.password}'
-    });
+    FormData formData = new FormData.from(
+        {"email": '${_data.email}', "password": '${_data.password}'});
 
     //Response response = await dio.post("/token", data: formData);
-    Response response = await dio.post(baseUrl + "/auth/mobile_login", data: formData);
+    Response response =
+        await dio.post(baseUrl + "/auth/mobile_login", data: formData);
 //    Map userMap = json.decode(response.data);
 //    print("***********************************************************************************");
 //
 //    print(response.data);
 //    print("***********************************************************************************");
-   print("test");
+    print("test");
     print(response.data);
 //    print("!!!!!!");
 //
@@ -121,10 +104,10 @@ class _LoginPageState extends State<LoginPage> {
 
     print(baseUrl + "/auth/mobile_login");
     var user = new User.fromJson(response.data);
-    if(user.id == 0){
+    if (user.id == 0) {
       print("Invalid username or password");
       _neverSatisfied();
-      } else {
+    } else {
       final prefs = await SharedPreferences.getInstance();
 
 // set value
@@ -134,28 +117,21 @@ class _LoginPageState extends State<LoginPage> {
 
       print('Howdy, $counter');
       Navigator.push(
-
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
       );
-
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery
-        .of(context)
-        .size;
+    final Size screenSize = MediaQuery.of(context).size;
 
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('Login'),
       ),
-
       body: new Container(
-
           padding: new EdgeInsets.all(20.0),
           child: new Form(
             key: this._formKey,
@@ -166,47 +142,34 @@ class _LoginPageState extends State<LoginPage> {
                     // Use email input type for emails.
                     decoration: new InputDecoration(
                         hintText: 'you@example.com',
-                        labelText: 'E-mail Address'
-                    ),
+                        labelText: 'E-mail Address'),
                     validator: this._validateEmail,
                     onSaved: (String value) {
                       this._data.email = value;
-                    }
-                ),
+                    }),
                 new TextFormField(
                     obscureText: true, // Use secure text for passwords.
                     decoration: new InputDecoration(
-                        hintText: 'Password',
-                        labelText: 'Enter your password'
-                    ),
+                        hintText: 'Password', labelText: 'Enter your password'),
                     validator: this._validatePassword,
                     onSaved: (String value) {
                       this._data.password = value;
-                    }
-                ),
+                    }),
                 new Container(
                   width: screenSize.width,
                   child: new RaisedButton(
                     child: new Text(
                       'Login',
-                      style: new TextStyle(
-                          color: Colors.white
-                      ),
+                      style: new TextStyle(color: Colors.white),
                     ),
                     onPressed: this.submit,
                     color: Colors.blue,
                   ),
-                  margin: new EdgeInsets.only(
-                      top: 20.0
-                  ),
+                  margin: new EdgeInsets.only(top: 20.0),
                 )
               ],
             ),
-          )
-
-      ),
+          )),
     );
-
   }
 }
-
