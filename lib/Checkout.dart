@@ -25,7 +25,7 @@ class _MyAppState extends State<Checkout> {
   String warningMessage = '';
   String titleMessage = 'Item Details';
   Color titleColor = Colors.black;
-  bool accessoriesOverride = false;
+  List<bool> accessoriesOverride = [];
 
   @override
   initState() {
@@ -36,10 +36,11 @@ class _MyAppState extends State<Checkout> {
 
   void onRemoveItem(int index) {
     items.removeAt(index);
+    accessoriesOverride.removeAt(index);
     setState(() {
       print("Removing from list at index: " + index.toString());
     });
-    allItemsVerified();
+    //allItemsVerified();
   }
 
   onUserWaiverNeeded() {
@@ -125,6 +126,7 @@ class _MyAppState extends State<Checkout> {
   Future addInventoryItem(int itemId) async {
     Item item = await inventoryService.getItem(itemId);
     items.add(item);
+    accessoriesOverride.add(false);
     itemDetailModal(items.length - 1);
     setState(() => {});
   }
@@ -242,23 +244,17 @@ class _MyAppState extends State<Checkout> {
             new FlatButton(
               child: Text('Add Item Note'),
               onPressed: () {
-                accessoriesOverride = true;
+                accessoriesOverride[index] = true;
               },
             ),
             FlatButton(
               child: Text('Continue'),
               onPressed: () {
-                if(verifyItemAccessories(items[index], index) || accessoriesOverride){
-                  accessoriesOverride = false;
+                allItemsVerified();
                   Navigator.pop(
                     context,
                     MaterialPageRoute(builder: (context) => HomeScreen()),
                   );
-                }else{
-                  setState(() {
-
-                  });
-                }
               },
             ),
           ],
@@ -267,19 +263,21 @@ class _MyAppState extends State<Checkout> {
     );
   }
 
-  verifyItemAccessories(Item item, index) {
-    for (bool included in item.accessoriesIncluded) {
-      if (!included) {
-        titleMessage =
-        'Warning: All accessories not included';
-        titleColor = Colors.red;
-        print('...Push accessories warning...');
-        return false;
+  verifyItem(Item item, int index) {
+    if (!accessoriesOverride[index]) {
+      for (bool included in item.accessoriesIncluded) {
+        if (!included) {
+          setState(() {
+            warningMessage =
+                'Warning: Attempting to checkout items without verifying all accesories are included is prohibited';
+          });
+          print('...Push accessories warning...');
+          return false;
+        }
       }
     }
     setState(() {
-      titleMessage = 'Item Details';
-      titleColor = Colors.black;
+      warningMessage = '';
     });
     print('...No accessories warning...');
     return true;
@@ -287,9 +285,9 @@ class _MyAppState extends State<Checkout> {
 
   bool allItemsVerified() {
     print('...Verifying accessories...');
-    for (Item item in items) {
-      for (bool included in item.accessoriesIncluded) {
-        if (!included) {
+    for (int index = 0; index < items.length; index++) {
+      for (bool included in items[index].accessoriesIncluded) {
+        if (!included && !accessoriesOverride[index]) {
           setState(() {
             warningMessage =
                 'Warning: Attempting to checkout items without verifying all accesories are included is prohibited';
