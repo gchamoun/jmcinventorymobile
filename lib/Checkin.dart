@@ -21,11 +21,13 @@ class _MyAppState extends State<Checkin> {
   InventoryService inventoryService = new InventoryService();
   String qrString = "";
   List<Item> items = [];
-  List<int> indexOfCheckouts = [];
+
+  //List<int> indexOfCheckouts = [];
   String message = '';
   String titleMessage = 'Item Details';
   Color titleColor = Colors.black;
-  bool accessoriesOverride = false;
+  List<bool> accessoriesOverride = [];
+  String warningMessage = '';
 
   @override
   initState() {
@@ -42,6 +44,9 @@ class _MyAppState extends State<Checkin> {
     final userIdGet = prefs.getInt('userId') ?? 0;
 
     items = await inventoryService.getUsersItems(userIdGet);
+    for (Item item in items) {
+      accessoriesOverride.add(false);
+    }
     print(items.toString());
 
     setState(() {
@@ -55,6 +60,7 @@ class _MyAppState extends State<Checkin> {
 
   void onRemoveItem(int index) {
     items.removeAt(index);
+    accessoriesOverride.removeAt(index);
     setState(() {});
   }
 
@@ -96,14 +102,14 @@ class _MyAppState extends State<Checkin> {
     print(userId);
   }
 
-  Future getUserItems(userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    final currentUserEmail = prefs.getString('userEmail') ?? 0;
-
-    setState(() {
-      userEmail = currentUserEmail;
-    });
-  }
+//  Future getUserItems(userId) async {
+//    final prefs = await SharedPreferences.getInstance();
+//    final currentUserEmail = prefs.getString('userEmail') ?? 0;
+//
+//    setState(() {
+//      userEmail = currentUserEmail;
+//    });
+//  }
 
   Future scanItem(itemId, index) async {
     final prefs = await SharedPreferences.getInstance();
@@ -111,13 +117,14 @@ class _MyAppState extends State<Checkin> {
 
     print("array before:");
 
-    indexOfCheckouts.add(index);
+//    indexOfCheckouts.add(index);
     print("array after:");
-    print(indexOfCheckouts);
+//    print(indexOfCheckouts);
     final result = await scan();
     print(qrString);
     print(itemId.toString());
     if (int.tryParse(qrString) == itemId) {
+      accessoriesOverride.add(false);
       await itemDetailModal(index);
       inventoryService.checkinItem(workerIdGet, itemId);
       _correctItem(items[index].description);
@@ -210,6 +217,7 @@ class _MyAppState extends State<Checkin> {
               ),
               //Here is the builder for my list of scanned qrcodes
               new Text(message),
+              new Text(warningMessage),
               new Expanded(
                   child: new ListView.builder(
                       itemCount: items.length,
@@ -243,6 +251,7 @@ class _MyAppState extends State<Checkin> {
       ),
     );
   }
+
   itemDetailModal(int index) async {
     return showDialog<void>(
       context: context,
@@ -257,22 +266,19 @@ class _MyAppState extends State<Checkin> {
             new FlatButton(
               child: Text('Add Item Note'),
               onPressed: () {
-                accessoriesOverride = true;
+                accessoriesOverride[index] = true;
               },
             ),
             FlatButton(
               child: Text('Continue'),
               onPressed: () {
-                if(verifyItemAccessories(items[index], index) || accessoriesOverride){
-                  accessoriesOverride = false;
+                if (verifyItemAccessories(items[index], index)) {
                   Navigator.pop(
                     context,
                     MaterialPageRoute(builder: (context) => HomeScreen()),
                   );
                 }else{
-                  setState(() {
 
-                  });
                 }
               },
             ),
@@ -281,20 +287,44 @@ class _MyAppState extends State<Checkin> {
       },
     );
   }
+
+//  bool allItemsVerified() {
+//    print('...Verifying accessories...');
+//    for (int index = 0; index < items.length; index++) {
+//      for (bool included in items[index].accessoriesIncluded) {
+//        if (!included && !accessoriesOverride[index]) {
+//          setState(() {
+//            warningMessage =
+//                'Warning: Attempting to checkout items without verifying all accesories are included is prohibited';
+//          });
+//          print('...Push accessories warning...');
+//          return false;
+//        }
+//      }
+//    }
+//    setState(() {
+//      warningMessage = '';
+//    });
+//    print('...No accessories warning...');
+//    return true;
+//  }
+
   verifyItemAccessories(Item item, index) {
+    print('in method' + widget.key.toString());
     for (bool included in item.accessoriesIncluded) {
-      if (!included) {
-        titleMessage =
-        'Warning: All accessories not included';
-        titleColor = Colors.red;
-        print('...Push accessories warning...');
-        return false;
+      if (!accessoriesOverride[index]) {
+        if (!included) {
+          titleMessage = 'Warning: All accessories not included';
+          titleColor = Colors.red;
+          print('...Push accessories warning...');
+          return false;
+        }
       }
+      setState(() {
+        titleMessage = 'Item Details';
+        titleColor = Colors.black;
+      });
     }
-    setState(() {
-      titleMessage = 'Item Details';
-      titleColor = Colors.black;
-    });
     print('...No accessories warning...');
     return true;
   }
